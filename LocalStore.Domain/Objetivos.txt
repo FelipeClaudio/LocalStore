@@ -1,0 +1,6 @@
+Responder as seguintes perguntas:
+1) Quais produtos venderam mais/menos em um período de tempo
+2) Quais produtos são mais lucrativo
+3) Quanto custa cada produto
+4) Qual o saldo dentro de um período determinado
+5) Qual a compra média por cliente
