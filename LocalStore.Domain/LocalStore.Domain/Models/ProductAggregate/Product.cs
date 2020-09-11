@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace LocalStore.Domain.Models.OrderAggregate
+namespace LocalStore.Domain.Models.ProductAggregate
 {
     public class Product : EntityBase
     {

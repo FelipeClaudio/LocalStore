@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LocalStore.Infrastructure.Database.Orders.Models
 {
@@ -11,9 +10,6 @@ namespace LocalStore.Infrastructure.Database.Orders.Models
 
         [Required]
         public Guid ProductId { get; set; }
-
-        [ForeignKey("ProductId")]
-        public Product Product { get; set; }
 
         [Required]
         public decimal Quantity { get; set; }

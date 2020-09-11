@@ -1,7 +1,7 @@
-﻿using LocalStore.Domain.Models.OrderAggregate;
+﻿using LocalStore.Domain.Models.ProductAggregate;
 using System.Linq;
 
-namespace LocalStore.Infrastructure.Database.Orders.Mappers
+namespace LocalStore.Infrastructure.Database.Products.Mappers
 {
     public static class ProductMapper
     {

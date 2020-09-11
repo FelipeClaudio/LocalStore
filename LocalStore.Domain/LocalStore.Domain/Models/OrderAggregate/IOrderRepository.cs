@@ -9,9 +9,5 @@ namespace LocalStore.Domain.Models.OrderAggregate
         IList<Order> GetOrders();
         IList<Order> GetOrdersInDateRange(DateTime startingDate, DateTime endDate);
         Order GetOrderById(Guid id);
-        IList<Product> GetProducts();
-        Product GetProduct(Guid id);
-        IList<ProductPart> GetParts();
-        ProductPart GetPart(Guid id);
     }
 }

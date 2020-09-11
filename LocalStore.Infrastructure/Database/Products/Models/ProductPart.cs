@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LocalStore.Infrastructure.Database.Orders.Models
+namespace LocalStore.Infrastructure.Database.Products.Models
 {
     public class ProductPart
     {
@@ -21,10 +21,6 @@ namespace LocalStore.Infrastructure.Database.Orders.Models
         [Required]
         public Product Product { get; set; }
 
-        [Required]
-        public Guid MaterialId { get; set; }
-
-        [ForeignKey("MaterialId")]
         public Material Material { get; set; }
     }
 }

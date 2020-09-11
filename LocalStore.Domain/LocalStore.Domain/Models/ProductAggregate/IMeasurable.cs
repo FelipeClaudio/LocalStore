@@ -1,4 +1,4 @@
-﻿namespace LocalStore.Domain.Models.OrderAggregate
+﻿namespace LocalStore.Domain.Models.ProductAggregate
 {
     public interface IMeasurable
     {

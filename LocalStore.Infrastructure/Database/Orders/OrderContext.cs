@@ -1,6 +1,5 @@
 ﻿using LocalStore.Infrastructure.Database.Orders.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace LocalStore.Infrastructure.Database.Orders
 {
@@ -23,26 +22,9 @@ namespace LocalStore.Infrastructure.Database.Orders
 
             modelBuilder.Entity<OrderItem>()
                 .HasKey(o => o.Id);
-
-            modelBuilder.Entity<Product>()
-                .HasMany(p => p.ProductParts)
-                .WithOne(p => p.Product)
-                .IsRequired();
-
-            modelBuilder.Entity<Product>()
-                .HasKey(p => p.Id);
-
-            modelBuilder.Entity<Material>()
-                .HasKey(m => m.Id);
-
-            modelBuilder.Entity<ProductPart>()
-                .HasKey(p => p.Id);
         }
 
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Material> Materials { get; set; }
-        public DbSet<ProductPart> ProductParts { get; set; }
     }
 }

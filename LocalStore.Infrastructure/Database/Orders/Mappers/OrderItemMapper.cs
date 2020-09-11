@@ -4,11 +4,11 @@ namespace LocalStore.Infrastructure.Database.Orders.Mappers
 {
     public static class OrderItemMapper
     {
-        public static OrderItem ToDomainModel(this Models.OrderItem orderItem) 
+        public static OrderItem ToDomainModel(this Models.OrderItem orderItem)
         {
             return new OrderItem(orderItem.Id)
             {
-                Product = orderItem.Product.ToDomainModel(),
+                ProductId = orderItem.ProductId,
                 Quantity = orderItem.Quantity,
                 UnitPrice = orderItem.UnitPrice
             };
@@ -19,9 +19,9 @@ namespace LocalStore.Infrastructure.Database.Orders.Mappers
             return new Models.OrderItem
             {
                 Id = orderItem.Id,
-                Product = orderItem.Product.ToRepositoryModel(),
                 Quantity = orderItem.Quantity,
-                UnitPrice = orderItem.UnitPrice
+                UnitPrice = orderItem.UnitPrice,
+                ProductId = orderItem.ProductId
             };
         }
     }

@@ -10,7 +10,7 @@ namespace LocalStore.Domain.Models.OrderAggregate
         public Order(Guid? id = null) : base(id) { }
 
         [Required]
-        public IList<OrderItem> Items { get; set; }
+        public List<OrderItem> Items { get; set; }
 
         [Required]
         public DateTime OrderDate { get; set; }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace LocalStore.Infrastructure.Database.Orders.Models
+namespace LocalStore.Infrastructure.Database.Products.Models
 {
     public class Product
     {

@@ -9,7 +9,7 @@ namespace LocalStore.Domain.Models.OrderAggregate
         public OrderItem(Guid? id = null) : base(id) { }
 
         [Required]
-        public Product Product { get; set; }
+        public Guid ProductId { get; set; }
 
         [Required]
         public decimal Quantity { get; set; }

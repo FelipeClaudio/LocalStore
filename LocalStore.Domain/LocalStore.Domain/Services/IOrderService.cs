@@ -1,4 +1,4 @@
-﻿using LocalStore.Domain.Models.OrderAggregate;
+﻿using LocalStore.Domain.Models.ProductAggregate;
 using System;
 
 namespace LocalStore.Domain.Services

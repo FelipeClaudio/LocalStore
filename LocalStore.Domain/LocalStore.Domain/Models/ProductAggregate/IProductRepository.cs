@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace LocalStore.Domain.Models.OrderAggregate
+namespace LocalStore.Domain.Models.ProductAggregate
 {
     public interface IProductRepository : IRepository<Product>
     {

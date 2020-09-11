@@ -1,4 +1,4 @@
-﻿using LocalStore.Domain.Models.OrderAggregate;
+﻿using LocalStore.Domain.Models.ProductAggregate;
 using LocalStore.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
