@@ -16,7 +16,7 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
             this._context = context;
         }
 
-        public ProductPart GetPart(Guid id)
+        public ProductPart GetPartById(Guid id)
         {
             return  this._context.ProductParts
                         .Include(p => p.Material)
@@ -32,12 +32,22 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
                         .ToList();
         }
 
-        public Product GetProduct(Guid id)
+        public Product GetProductById(Guid id)
         {
             return  this._context.Products
                         .Include(p => p.ProductParts)
                         .ThenInclude(p => p.Material)
-                        .FirstOrDefault(p => p.Id == id).ToDomainModel();
+                        .FirstOrDefault(p => p.Id == id)
+                        .ToDomainModel();
+        }
+
+        public Product GetProductByName(string name)
+        {
+            return this._context.Products
+                        .Include(p => p.ProductParts)
+                        .ThenInclude(p => p.Material)
+                        .FirstOrDefault(p => p.Name == name)
+                        .ToDomainModel();
         }
 
         public IList<Product> GetProducts()
@@ -45,7 +55,8 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
             return  this._context.Products
                         .Include(p => p.ProductParts)
                         .ThenInclude(p => p.Material)
-                        .Select(p => p.ToDomainModel()).ToList();
+                        .Select(p => p.ToDomainModel())
+                        .ToList();
         }
 
         public void Insert(Product entity)
@@ -54,7 +65,7 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
             this._context.SaveChanges();
         }
 
-        public void Delete(Guid id)
+        public void DeleteById(Guid id)
         {
             Models.Product product = this._context.Products.FirstOrDefault(p => p.Id == id);
             this._context.Products.Remove(product);

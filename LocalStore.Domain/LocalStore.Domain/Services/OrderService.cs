@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace LocalStore.Domain.Services
 {
-    public class OrderService
+    public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
@@ -20,13 +20,21 @@ namespace LocalStore.Domain.Services
         public Product GetMostSoldProductInDateRange(DateTime initialDate, DateTime finalDate)
         {
             ICollection<Order> ordersInDateRange = this._orderRepository.GetOrdersInDateRange(initialDate, finalDate);
-            var mostSoldProduct = ordersInDateRange
-                                    .GroupBy(o => o.Id)
-                                    .Select(x => new { Id = x.Key, Count = x.Count() })
-                                    .OrderBy(x => x.Count)
-                                    .First();
+            IEnumerable<OrderItem> orderItems = ordersInDateRange.SelectMany(o => o.Items);
+            var productsForOrders = this._productRepository
+                                        .GetProducts()
+                                        .Join(orderItems, product => product.Id, item => item.ProductId, 
+                                        (product, order) => product);
 
-            return this._productRepository.GetProduct(mostSoldProduct.Id);
+            var mostSoldProduct = productsForOrders
+                                    .GroupBy(p => p.Name)
+                                    .Select(p => new { Name = p.Key, Count = p.Count() })
+                                    .OrderByDescending(p => p.Count)
+                                    .FirstOrDefault();
+
+            
+
+            return this._productRepository.GetProductByName(mostSoldProduct.Name);
         }
     }
 }

@@ -7,11 +7,11 @@ namespace LocalStore.Application.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
         private readonly IOrderService _orderService;
 
-        public ProductController(IOrderService orderService)
+        public ProductsController(IOrderService orderService)
         {
             this._orderService = orderService;
         }

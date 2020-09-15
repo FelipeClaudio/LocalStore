@@ -5,6 +5,12 @@ namespace LocalStore.Infrastructure.Database.Orders
 {
     public class OrderContext : DbContext
     {
+        public OrderContext(DbContextOptions<OrderContext> options) : base(options) { }
+
+        public OrderContext()
+        {
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Data Source=BRRIOWN032980\SQLEXPRESS;Initial Catalog=LocalStore;Integrated Security=True");

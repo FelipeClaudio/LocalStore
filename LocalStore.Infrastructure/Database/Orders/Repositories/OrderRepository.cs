@@ -16,7 +16,7 @@ namespace LocalStore.Infrastructure.Database.Orders.Repositories
             this._context = context;
         }
 
-        public void Delete(Guid id)
+        public void DeleteById(Guid id)
         {
             Order order = this.GetOrderById(id);
             this._context.Orders.Remove(order.ToRepositoryModel());
@@ -38,6 +38,7 @@ namespace LocalStore.Infrastructure.Database.Orders.Repositories
         public IList<Order> GetOrdersInDateRange(DateTime startingDate, DateTime endDate)
         {
             return  this._context.Orders
+                        .Include(o => o.Items)
                         .Where(o => o.OrderDate >= startingDate && o.OrderDate <= endDate)
                         .Select(o => o.ToDomainModel())
                         .ToList();

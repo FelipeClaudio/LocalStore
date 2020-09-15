@@ -1,4 +1,5 @@
 ﻿using LocalStore.Domain.Models.ProductAggregate;
+using System;
 using System.Linq;
 
 namespace LocalStore.Infrastructure.Database.Products.Mappers
@@ -16,8 +17,9 @@ namespace LocalStore.Infrastructure.Database.Products.Mappers
 
         public static Models.Product ToRepositoryModel(this Product product)
         {
-            return new Models.Product
+            return new Models.Product()
             {
+                Id = product.Id,
                 Name = product.Name,
                 ProductParts = product.ProductParts.Select(p => p.ToRepositoryModel()).ToList()
             };

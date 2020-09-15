@@ -4,6 +4,7 @@ using LocalStore.Infrastructure.Database.Orders;
 using LocalStore.Infrastructure.Database.Orders.Repositories;
 using LocalStore.Infrastructure.Database.Products;
 using LocalStore.Infrastructure.Database.Products.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 
@@ -13,6 +14,10 @@ namespace TestApplication
     {
         private static void Main(string[] args)
         {
+            string connectionString = @"Data Source=BRRIOWN032980\SQLEXPRESS;Initial Catalog=LocalStore;Integrated Security=True";
+            var productsOptionsBuilder = new DbContextOptionsBuilder();
+            productsOptionsBuilder.UseSqlServer(connectionString);
+
             var productsRespository = new ProductRepository(new ProductContext());
 
             var partList = new List<ProductPart> {

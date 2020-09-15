@@ -5,6 +5,12 @@ namespace LocalStore.Infrastructure.Database.Products
 {
     public class ProductContext : DbContext
     {
+        public ProductContext(DbContextOptions<ProductContext> options) : base(options) { }
+
+        public ProductContext()
+        {
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Data Source=BRRIOWN032980\SQLEXPRESS;Initial Catalog=LocalStore;Integrated Security=True");

@@ -1,5 +1,13 @@
+using LocalStore.Domain.Models.OrderAggregate;
+using LocalStore.Domain.Models.ProductAggregate;
+using LocalStore.Domain.Services;
+using LocalStore.Infrastructure.Database.Orders;
+using LocalStore.Infrastructure.Database.Orders.Repositories;
+using LocalStore.Infrastructure.Database.Products;
+using LocalStore.Infrastructure.Database.Products.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,6 +16,7 @@ namespace LocalStore.Application
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -18,9 +27,15 @@ namespace LocalStore.Application
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            string ordersDbConnectionString = Configuration.GetConnectionString("OrdersDb");
+            string productsDbConnectionString = Configuration.GetConnectionString("ProductsDb");
 
-            // TODO: Add Db connection.
+            services.AddControllers();
+            services.AddDbContext<OrderContext>(options => options.UseSqlServer(ordersDbConnectionString));
+            services.AddDbContext<ProductContext>(options => options.UseSqlServer(productsDbConnectionString));
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderService, OrderService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

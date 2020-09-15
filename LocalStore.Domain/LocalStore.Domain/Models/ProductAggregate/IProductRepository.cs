@@ -7,8 +7,9 @@ namespace LocalStore.Domain.Models.ProductAggregate
     public interface IProductRepository : IRepository<Product>
     {
         IList<Product> GetProducts();
-        Product GetProduct(Guid id);
+        Product GetProductById(Guid id);
+        Product GetProductByName(string name);
         IList<ProductPart> GetParts();
-        ProductPart GetPart(Guid id);
+        ProductPart GetPartById(Guid id);
     }
 }
