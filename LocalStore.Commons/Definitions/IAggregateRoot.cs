@@ -1,4 +1,4 @@
-﻿namespace LocalStore.Commons
+﻿namespace LocalStore.Commons.Definitions
 {
     public interface IAggregateRoot
     {

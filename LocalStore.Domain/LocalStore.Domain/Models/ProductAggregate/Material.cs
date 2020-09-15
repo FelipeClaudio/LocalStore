@@ -1,4 +1,4 @@
-﻿using LocalStore.Commons;
+﻿using LocalStore.Commons.Definitions;
 using System.Collections.Generic;
 
 namespace LocalStore.Domain.Models.ProductAggregate

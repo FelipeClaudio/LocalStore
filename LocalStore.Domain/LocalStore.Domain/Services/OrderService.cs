@@ -21,10 +21,10 @@ namespace LocalStore.Domain.Services
         {
             ICollection<Order> ordersInDateRange = this._orderRepository.GetOrdersInDateRange(initialDate, finalDate);
             IEnumerable<OrderItem> orderItems = ordersInDateRange.SelectMany(o => o.Items);
-            var productsForOrders = this._productRepository
-                                        .GetProducts()
-                                        .Join(orderItems, product => product.Id, item => item.ProductId, 
-                                        (product, order) => product);
+            IEnumerable<Product> productsForOrders = this._productRepository
+                                                        .GetProducts()
+                                                        .Join(orderItems, product => product.Id, item => item.ProductId, 
+                                                        (product, order) => product);
 
             var mostSoldProduct = productsForOrders
                                     .GroupBy(p => p.Name)

@@ -1,5 +1,4 @@
-﻿using LocalStore.Commons;
-using LocalStore.Domain.Models.OrderAggregate;
+﻿using LocalStore.Commons.Definitions;
 using System.Collections.Generic;
 
 namespace LocalStore.Domain.Models.ProductAggregate

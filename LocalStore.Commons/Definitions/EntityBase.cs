@@ -1,12 +1,18 @@
-﻿using System;
+﻿using LocalStore.Commons.Services;
+using System;
 
-namespace LocalStore.Commons
+namespace LocalStore.Commons.Definitions
 {
     public abstract class EntityBase : IEntity
     {
-        public DateTime CreationDate => DateTime.Now;
+        protected EntityBase(IDateTimeService dateTimeService)
+        {
+            this.CreationDate = dateTimeService.GetCurrentDateTime();
+        }
 
         public Guid Id { get; }
+
+        public DateTime CreationDate { get; }
 
         protected EntityBase(Guid? id = null)
         {

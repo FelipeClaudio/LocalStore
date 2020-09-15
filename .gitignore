@@ -131,3 +131,5 @@ $RECYCLE.BIN/
 .DS_Store
 
 _NCrunch*
+/LocalStore.Domain/.vs/LocalStore/v16/TestStore/0/testlog.manifest
+/LocalStore.Domain/.vs/LocalStore/v16/TestStore/0/000.testlog

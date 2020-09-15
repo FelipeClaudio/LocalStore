@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace LocalStore.Commons
+namespace LocalStore.Commons.Definitions
 {
     public abstract class ValueObject
     {
