@@ -61,8 +61,11 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
 
         public void Insert(Product entity)
         {
-            this._context.Products.Add(entity.ToRepositoryModel());
-            this._context.SaveChanges();
+            if (this._context.Products.FirstOrDefault(p => p.Id == entity.Id) == null)
+            {
+                this._context.Products.Add(entity.ToRepositoryModel());
+                this._context.SaveChanges();
+            }
         }
 
         public void DeleteById(Guid id)

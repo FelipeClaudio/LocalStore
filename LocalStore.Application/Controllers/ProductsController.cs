@@ -1,4 +1,6 @@
-﻿using LocalStore.Domain.Models.ProductAggregate;
+﻿using LocalStore.Application.Models;
+using LocalStore.Commons.Models;
+using LocalStore.Domain.Models.ProductAggregate;
 using LocalStore.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,12 +19,23 @@ namespace LocalStore.Application.Controllers
         }
 
         [HttpGet("mostsold")]
-        public Product GetMostSoldProduct()
+        public ActionResult<GetMostSoldProductResponse> GetMostSoldProduct()
         {
-            DateTime finalDate = DateTime.Now;
-            DateTime initialDate = finalDate.AddDays(-30);
+            var currentTime = DateTime.Now;
+            var dateRange = new DateRange
+            {
+                InitialDate = currentTime.AddDays(-30),
+                FinalDate = currentTime
+            };
 
-            return this._orderService.GetMostSoldProductInDateRange(initialDate, finalDate);
+            Product mostSoldProduct =  this._orderService.GetMostSoldProductInDateRange(dateRange);
+            decimal revenue = this._orderService.GetRevenueInDateRangeForProductId(dateRange, mostSoldProduct.Id);
+
+            return Ok(new GetMostSoldProductResponse
+            {
+                Name = mostSoldProduct.Name,
+                Revenue = revenue
+            });
         }
     }
 }

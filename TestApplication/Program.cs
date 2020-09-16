@@ -72,6 +72,21 @@ namespace TestApplication
             };
             ordersRepository.Insert(order2);
 
+            var order3 = new Order
+            {
+                Items = new List<OrderItem>
+                {
+                    new OrderItem
+                    {
+                        ProductId = product2.Id,
+                        Quantity = 9,
+                        UnitPrice = 2
+                    }
+                },
+                OrderDate = DateTime.Now
+            };
+            ordersRepository.Insert(order3);
+
             var orders = ordersRepository.GetOrders();
         }
     }

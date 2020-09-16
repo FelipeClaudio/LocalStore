@@ -1,4 +1,5 @@
-﻿using LocalStore.Domain.Models.OrderAggregate;
+﻿using LocalStore.Commons.Models;
+using LocalStore.Domain.Models.OrderAggregate;
 using LocalStore.Infrastructure.Database.Orders.Mappers;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -35,11 +36,11 @@ namespace LocalStore.Infrastructure.Database.Orders.Repositories
             return this._context.Orders.Where(o => o.Id == id).FirstOrDefault().ToDomainModel();
         }
 
-        public IList<Order> GetOrdersInDateRange(DateTime startingDate, DateTime endDate)
+        public IList<Order> GetOrdersInDateRange(DateRange dateRange)
         {
             return  this._context.Orders
                         .Include(o => o.Items)
-                        .Where(o => o.OrderDate >= startingDate && o.OrderDate <= endDate)
+                        .Where(o => o.OrderDate >= dateRange.InitialDate && o.OrderDate <= dateRange.FinalDate)
                         .Select(o => o.ToDomainModel())
                         .ToList();
         }
