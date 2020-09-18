@@ -61,7 +61,7 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
 
         public void Insert(Product entity)
         {
-            if (this._context.Products.FirstOrDefault(p => p.Id == entity.Id) == null)
+            if (this._context.Products.FirstOrDefault(p => p.Name.Equals(entity.Name)) == null)
             {
                 this._context.Products.Add(entity.ToRepositoryModel());
                 this._context.SaveChanges();

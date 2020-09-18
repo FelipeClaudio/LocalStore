@@ -18,6 +18,8 @@ namespace LocalStore.Application.Controllers
             this._orderService = orderService;
         }
 
+        // TODO: change it to TOP most sold
+        // TODO: implement TOP less sold
         [HttpGet("mostsold")]
         public ActionResult<GetMostSoldProductResponse> GetMostSoldProduct()
         {

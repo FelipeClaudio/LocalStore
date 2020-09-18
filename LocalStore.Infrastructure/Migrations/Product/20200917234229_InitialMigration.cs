@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LocalStore.Infrastructure.Migrations.Product
 {
-    public partial class InitialProductMigration : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,6 +12,7 @@ namespace LocalStore.Infrastructure.Migrations.Product
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    CreationTime = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
                     Name = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
@@ -24,6 +25,7 @@ namespace LocalStore.Infrastructure.Migrations.Product
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    CreationTime = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
                     Name = table.Column<string>(nullable: false),
                     MeasuringUnit = table.Column<string>(nullable: false),
                     Quantity = table.Column<decimal>(nullable: false),

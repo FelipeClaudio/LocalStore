@@ -26,11 +26,19 @@ namespace LocalStore.Infrastructure.Database.Products
             modelBuilder.Entity<Product>()
                 .HasKey(p => p.Id);
 
+            modelBuilder.Entity<Product>()
+                .Property(b => b.CreationTime)
+                .HasDefaultValueSql("getdate()");
+
             modelBuilder.Entity<ProductPart>()
                 .HasKey(p => p.Id);
 
             modelBuilder.Entity<ProductPart>()
                 .OwnsOne(p => p.Material);
+
+            modelBuilder.Entity<ProductPart>()
+                .Property(b => b.CreationTime)
+                .HasDefaultValueSql("getdate()");
         }
 
         public DbSet<Product> Products { get; set; }

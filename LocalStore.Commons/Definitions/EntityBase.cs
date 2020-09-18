@@ -1,24 +1,18 @@
-﻿using LocalStore.Commons.Services;
-using System;
+﻿using System;
 
 namespace LocalStore.Commons.Definitions
 {
     public abstract class EntityBase : IEntity
     {
-        protected EntityBase(IDateTimeService dateTimeService)
+        protected EntityBase(Guid? id = null)
         {
-            this.CreationDate = dateTimeService.GetCurrentDateTime();
+            this.Id = id ?? Guid.NewGuid();
         }
 
         public Guid Id { get; }
 
         public DateTime CreationDate { get; }
 
-        protected EntityBase(Guid? id = null)
-        {
-            this.Id = id ?? Guid.NewGuid();
-        }
- 
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -26,7 +20,7 @@ namespace LocalStore.Commons.Definitions
                 return false;
             }
 
-            if (obj.GetType() != this.GetType()) 
+            if (obj.GetType() != this.GetType())
             {
                 return false;
             }

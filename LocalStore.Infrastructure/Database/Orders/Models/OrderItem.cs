@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LocalStore.Infrastructure.Database.Orders.Models
 {
-    public class OrderItem
+    public class OrderItem : DatabaseEntityBase
     {
         [Key]
         public Guid Id { get; set; }

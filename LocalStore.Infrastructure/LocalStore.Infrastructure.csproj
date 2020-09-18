@@ -17,8 +17,4 @@
     <ProjectReference Include="..\LocalStore.Domain\LocalStore.Domain\LocalStore.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\Order\" />
-  </ItemGroup>
-
 </Project>

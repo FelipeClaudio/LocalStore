@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LocalStore.Infrastructure.Database.Products.Models
 {
-    public class Product
+    public class Product : DatabaseEntityBase
     {
         [Key]
         public Guid Id { get; set; }

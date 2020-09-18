@@ -1,10 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LocalStore.Infrastructure.Database.Products.Models
 {
-    public class ProductPart
+    public class ProductPart : DatabaseEntityBase
     {
         [Key]
         public Guid Id { get; set; }

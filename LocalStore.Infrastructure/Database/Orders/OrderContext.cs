@@ -1,5 +1,6 @@
 ﻿using LocalStore.Infrastructure.Database.Orders.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace LocalStore.Infrastructure.Database.Orders
 {
@@ -26,8 +27,16 @@ namespace LocalStore.Infrastructure.Database.Orders
             modelBuilder.Entity<Order>()
                 .HasKey(o => o.Id);
 
+            modelBuilder.Entity<Order>()
+                .Property(b => b.CreationTime)
+                .HasDefaultValueSql("getdate()");
+
             modelBuilder.Entity<OrderItem>()
                 .HasKey(o => o.Id);
+
+            modelBuilder.Entity<OrderItem>()
+                .Property(b => b.CreationTime)
+                .HasDefaultValueSql("getdate()");
         }
 
         public DbSet<Order> Orders { get; set; }
