@@ -18,7 +18,7 @@ namespace LocalStore.Domain.Services
             this._productRepository = productRepository;
         }
 
-        public Product GetMostSoldProductInDateRange(DateRange dateRange)
+        public IEnumerable<Product> GetTopNMostSoldProductsInDateRange(DateRange dateRange, int numberOfElements)
         {
             IEnumerable<OrderItem> orderItems = GetOrderItemsForDateRange(dateRange);
             IEnumerable<Product> productsForOrders = this._productRepository
@@ -26,15 +26,15 @@ namespace LocalStore.Domain.Services
                                                         .Join(orderItems, product => product.Id, item => item.ProductId,
                                                         (product, order) => product);
 
-            var mostSoldProduct = productsForOrders
+            var mostSoldProducts = productsForOrders
                                     .GroupBy(p => p.Name)
                                     .Select(p => new { Name = p.Key, Count = p.Count() })
                                     .OrderByDescending(p => p.Count)
-                                    .FirstOrDefault();
+                                    .Take(numberOfElements);
 
 
 
-            return this._productRepository.GetProductByName(mostSoldProduct.Name);
+            return mostSoldProducts.Select(product => this._productRepository.GetProductByName(product.Name));
         }
         public decimal GetRevenueInDateRangeForProductId(DateRange dateRange, Guid id)
         {
