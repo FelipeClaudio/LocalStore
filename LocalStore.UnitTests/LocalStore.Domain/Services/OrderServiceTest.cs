@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System;
 using FluentAssertions;
 using LocalStore.Commons.Models;
+using System.Linq;
 
 namespace LocalStore.UnitTests.LocalStore.Domain.Services
 {
@@ -27,7 +28,8 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
             this._guidList = new List<Guid>
             {
                 new Guid("62FA647C-AD54-4BCC-A860-E5A2664B0191"),
-                new Guid("62FA647C-AD54-4BCC-A860-E5A2664B0192")
+                new Guid("62FA647C-AD54-4BCC-A860-E5A2664B0192"),
+                new Guid("62FA647C-AD54-4BCC-A860-E5A2664B0193")
             };
 
             CreateOrdersListStub();
@@ -43,22 +45,30 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
                 .Setup(p => p.GetProducts())
                 .Returns(this._getProductsListStub);
 
-            this._productRepositoryMock
-                .Setup(p => p.GetProductByName("ultra cool product"))
-                .Returns(this._getProductsListStub[1]);
+            for (int i = 0; i < this._getProductsListStub.Count; i++)
+            { 
+                this._productRepositoryMock
+                    .Setup(p => p.GetProductByName(this._getProductsListStub[i].Name))
+                    .Returns(this._getProductsListStub[i]);
+            }
+
 
             this._orderService = new OrderService(this._orderRespositoryMock.Object, this._productRepositoryMock.Object);
         }    
 
-        [InlineData("2020-03-04", "2020-05-06")]
-        [InlineData("2020-03-04", "2020-03-05")]
-        [InlineData("2020-03-04", "2020-03-03")]
+        [InlineData("2020-03-04", "2020-05-06", 1)]
+        [InlineData("2020-03-12", "2020-03-12", 2)]
+        [InlineData("2020-03-11", "2020-03-13", 3)]
         [Theory(DisplayName = "Featurea: OrderService. | Given: ValidDateRange. | When: GetMostSoldProductInDateRange. | Should: Return most sold product.")]
 
-        public void GetMostSoldProductInDateRange_ValidDateRange_ShouldReturnMostSoldProduct(string initialDateString, string finalDateString)
+        public void GetMostSoldProductInDateRange_ValidDateRange_ShouldReturnMostSoldProduct(string initialDateString, string finalDateString, int numberOfProducts)
         {
             // Arrange
-            Product expectedProduct = this._getProductsListStub[1];
+            List<Product> expectedProducts = new List<Product>{
+                this._getProductsListStub[1],
+                this._getProductsListStub[0],
+                this._getProductsListStub[2]
+            };
 
             var dateRange = new DateRange
             {
@@ -67,10 +77,10 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
             };
 
             // Act
-            Product mostSoldProduct = this._orderService.GetMostSoldProductInDateRange(dateRange);
+            IEnumerable<Product> mostSoldProducts = this._orderService.GetTopNMostSoldProductsInDateRange(dateRange, numberOfProducts);
 
             // Assert
-            mostSoldProduct.Should().BeEquivalentTo(expectedProduct);
+            mostSoldProducts.Should().BeEquivalentTo(expectedProducts.Take(numberOfProducts));
             this._orderRespositoryMock.Verify(o => o.GetOrdersInDateRange(dateRange), Times.Once);
             this._productRepositoryMock.Verify(p => p.GetProducts(), Times.Once);
             this._productRepositoryMock.Verify(p => p.GetProductByName(this._getProductsListStub[1].Name), Times.Once);
@@ -98,6 +108,14 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
                         new ProductPart ("lighting bulb", "grams", 1 , new Material("uranium", "radioactive material")),
                         new ProductPart ("power switch", "grams", 5 , new Material("carbon", "a nice conductor"))
                     }
+                },
+                new Product(_guidList[2])
+                {
+                    Name = "new product",
+                    ProductParts = new List<ProductPart>
+                    {
+                        new ProductPart ("window", "grams", 300 , new Material("glass", "Extremely fragile"))
+                    }
                 }
             };
         }
@@ -112,21 +130,27 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
                     {
                         new OrderItem
                         {
-                            ProductId = _guidList[1],
+                            ProductId = this._guidList[1],
                             Quantity = 3,
                             UnitPrice = 5
                         },
                         new OrderItem
                         {
-                            ProductId = _guidList[0],
+                            ProductId = this._guidList[0],
                             Quantity = 10,
                             UnitPrice = 2
                         },
                         new OrderItem
                         {
-                            ProductId = _guidList[1],
+                            ProductId = this._guidList[1],
                             Quantity = 1,
                             UnitPrice = 30
+                        },
+                        new OrderItem
+                        {
+                            ProductId = this._guidList[2],
+                            Quantity = 2,
+                            UnitPrice = 60
                         }
                     },
                     OrderDate = new DateTime(2020, 3, 12)
