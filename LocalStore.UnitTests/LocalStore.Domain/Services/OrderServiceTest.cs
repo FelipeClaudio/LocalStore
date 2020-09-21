@@ -48,7 +48,7 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
             for (int i = 0; i < this._getProductsListStub.Count; i++)
             { 
                 this._productRepositoryMock
-                    .Setup(p => p.GetProductByName(this._getProductsListStub[i].Name))
+                    .Setup(p => p.GetProductById(this._getProductsListStub[i].Id))
                     .Returns(this._getProductsListStub[i]);
             }
 
@@ -59,15 +59,16 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
         [InlineData("2020-03-04", "2020-05-06", 1)]
         [InlineData("2020-03-12", "2020-03-12", 2)]
         [InlineData("2020-03-11", "2020-03-13", 3)]
-        [Theory(DisplayName = "Featurea: OrderService. | Given: ValidDateRange. | When: GetMostSoldProductInDateRange. | Should: Return most sold product.")]
+        [Theory(DisplayName = "Feature: OrderService. | Given: ValidDateRange. | When: GetMostSoldProductInDateRange. | Should: Return most sold product for date range.")]
 
-        public void GetMostSoldProductInDateRange_ValidDateRange_ShouldReturnMostSoldProduct(string initialDateString, string finalDateString, int numberOfProducts)
+        public void GetMostSoldProductInDateRange_ValidDateRange_ShouldReturnMostSoldProductForDateRange(string initialDateString, string finalDateString, int numberOfProducts)
         {
             // Arrange
-            List<Product> expectedProducts = new List<Product>{
+            List<Product> expectedProducts = new List<Product>
+            {
                 this._getProductsListStub[1],
-                this._getProductsListStub[0],
-                this._getProductsListStub[2]
+                this._getProductsListStub[2],
+                this._getProductsListStub[0]
             };
 
             var dateRange = new DateRange
@@ -82,8 +83,45 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
             // Assert
             mostSoldProducts.Should().BeEquivalentTo(expectedProducts.Take(numberOfProducts));
             this._orderRespositoryMock.Verify(o => o.GetOrdersInDateRange(dateRange), Times.Once);
-            this._productRepositoryMock.Verify(p => p.GetProducts(), Times.Once);
-            this._productRepositoryMock.Verify(p => p.GetProductByName(this._getProductsListStub[1].Name), Times.Once);
+
+            for (int i = 0; i < numberOfProducts; i++)
+            {
+                this._productRepositoryMock.Verify(p => p.GetProductById(expectedProducts[i].Id), Times.Once);
+            }
+        }
+
+        [InlineData("2020-03-04", "2020-05-06", 1)]
+        [InlineData("2020-03-12", "2020-03-12", 2)]
+        [InlineData("2020-03-11", "2020-03-13", 3)]
+        [Theory(DisplayName = "Feature: OrderService. | Given: ValidDateRange. | When: GetLessSoldProductInDateRange. | Should: Return less sold products for date range.")]
+
+        public void GetLessSoldProductInDateRange_ValidDateRange_ShouldReturnMostSoldProductForDateRange(string initialDateString, string finalDateString, int numberOfProducts)
+        {
+            // Arrange
+            List<Product> expectedProducts = new List<Product>
+            {
+                this._getProductsListStub[0],
+                this._getProductsListStub[2],
+                this._getProductsListStub[1]
+            };
+
+            var dateRange = new DateRange
+            {
+                InitialDate = DateTime.Parse(initialDateString),
+                FinalDate = DateTime.Parse(finalDateString)
+            };
+
+            // Act
+            IEnumerable<Product> mostSoldProducts = this._orderService.GetTopNLessSoldProductsInDateRange(dateRange, numberOfProducts);
+
+            // Assert
+            mostSoldProducts.Should().BeEquivalentTo(expectedProducts.Take(numberOfProducts));
+            this._orderRespositoryMock.Verify(o => o.GetOrdersInDateRange(dateRange), Times.Once);
+
+            for (int i = 0; i < numberOfProducts; i++)
+            {
+                this._productRepositoryMock.Verify(p => p.GetProductById(expectedProducts[i].Id), Times.Once);
+            }
         }
 
         private void CreateProductsListStub()
@@ -130,19 +168,19 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
                     {
                         new OrderItem
                         {
-                            ProductId = this._guidList[1],
+                            ProductId = this._guidList[2],
                             Quantity = 3,
                             UnitPrice = 5
                         },
                         new OrderItem
                         {
-                            ProductId = this._guidList[0],
+                            ProductId = this._guidList[1],
                             Quantity = 10,
                             UnitPrice = 2
                         },
                         new OrderItem
                         {
-                            ProductId = this._guidList[1],
+                            ProductId = this._guidList[0],
                             Quantity = 1,
                             UnitPrice = 30
                         },

@@ -17,25 +17,6 @@ namespace LocalStore.Domain.Services
             this._orderRepository = orderRepository;
             this._productRepository = productRepository;
         }
-
-        public IEnumerable<Product> GetTopNMostSoldProductsInDateRange(DateRange dateRange, int numberOfElements)
-        {
-            IEnumerable<OrderItem> orderItems = GetOrderItemsForDateRange(dateRange);
-            IEnumerable<Product> productsForOrders = this._productRepository
-                                                        .GetProducts()
-                                                        .Join(orderItems, product => product.Id, item => item.ProductId,
-                                                        (product, order) => product);
-
-            var mostSoldProducts = productsForOrders
-                                    .GroupBy(p => p.Name)
-                                    .Select(p => new { Name = p.Key, Count = p.Count() })
-                                    .OrderByDescending(p => p.Count)
-                                    .Take(numberOfElements);
-
-
-
-            return mostSoldProducts.Select(product => this._productRepository.GetProductByName(product.Name));
-        }
         public decimal GetRevenueInDateRangeForProductId(DateRange dateRange, Guid id)
         {
             var orderItems = GetOrderItemsForDateRange(dateRange);
@@ -45,6 +26,28 @@ namespace LocalStore.Domain.Services
                              .Sum(o => o.orderRevenue);
         }
 
+        public IEnumerable<Product> GetTopNMostSoldProductsInDateRange(DateRange dateRange, int numberOfElements)
+        {
+            IEnumerable<OrderItem> orderItems = GetOrderItemsForDateRange(dateRange);
+            var ordersCountByProductId = orderItems.GroupBy(o => o.ProductId)
+                                                   .Select(o => new { ProductId = o.Key, Count = o.Sum(oi => oi.Quantity) })
+                                                   .OrderByDescending(o => o.Count)
+                                                   .Take(numberOfElements);
+
+            return ordersCountByProductId.Select(product => this._productRepository.GetProductById(product.ProductId));
+        }
+
+        public IEnumerable<Product> GetTopNLessSoldProductsInDateRange(DateRange dateRange, int numberOfElements)
+        {
+            IEnumerable<OrderItem> orderItems = GetOrderItemsForDateRange(dateRange);
+            var ordersCountByProductId = orderItems.GroupBy(o => o.ProductId)
+                                                   .Select(o => new { ProductId = o.Key, Count = o.Sum(oi => oi.Quantity) })
+                                                   .OrderBy(o => o.Count)
+                                                   .Take(numberOfElements);
+
+            return ordersCountByProductId.Select(product => this._productRepository.GetProductById(product.ProductId));
+        }
+
         private IEnumerable<OrderItem> GetOrderItemsForDateRange(DateRange dateRange)
         {
             ICollection<Order> ordersInDateRange = this._orderRepository.GetOrdersInDateRange(dateRange);
@@ -52,6 +55,5 @@ namespace LocalStore.Domain.Services
 
             return orderItems;
         }
-
     }
 }
