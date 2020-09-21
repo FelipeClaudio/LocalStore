@@ -4,6 +4,8 @@ using LocalStore.Domain.Models.ProductAggregate;
 using LocalStore.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LocalStore.Application.Controllers
 {
@@ -18,26 +20,17 @@ namespace LocalStore.Application.Controllers
             this._orderService = orderService;
         }
 
-        // TODO: change it to TOP most sold
         // TODO: implement TOP less sold
-        [HttpGet("mostsold")]
-        public ActionResult<GetMostSoldProductResponse> GetMostSoldProduct()
+        [HttpGet("mostsold/{numberOfProducts}")]
+        public ActionResult<IEnumerable<GetMostSoldProductResponse>> GetMostSoldProduct(int numberOfProducts, [FromQuery] DateRange dateRange)
         {
-            var currentTime = DateTime.Now;
-            var dateRange = new DateRange
-            {
-                InitialDate = currentTime.AddDays(-30),
-                FinalDate = currentTime
-            };
+            IEnumerable<Product> mostSoldProducts =  this._orderService.GetTopNMostSoldProductsInDateRange(dateRange, numberOfProducts);
 
-            Product mostSoldProduct =  this._orderService.GetMostSoldProductInDateRange(dateRange);
-            decimal revenue = this._orderService.GetRevenueInDateRangeForProductId(dateRange, mostSoldProduct.Id);
-
-            return Ok(new GetMostSoldProductResponse
+            return Ok(mostSoldProducts.Select(product => new GetMostSoldProductResponse
             {
-                Name = mostSoldProduct.Name,
-                Revenue = revenue
-            });
+                Name = product.Name,
+                Revenue = this._orderService.GetRevenueInDateRangeForProductId(dateRange, product.Id)
+            }));
         }
     }
 }
