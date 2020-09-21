@@ -3,7 +3,6 @@ using LocalStore.Commons.Models;
 using LocalStore.Domain.Models.ProductAggregate;
 using LocalStore.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,11 +19,22 @@ namespace LocalStore.Application.Controllers
             this._orderService = orderService;
         }
 
-        // TODO: implement TOP less sold
         [HttpGet("mostsold/{numberOfProducts}")]
-        public ActionResult<IEnumerable<GetMostSoldProductResponse>> GetMostSoldProduct(int numberOfProducts, [FromQuery] DateRange dateRange)
+        public ActionResult<IEnumerable<GetMostSoldProductResponse>> GetNMostSoldProducts(int numberOfProducts, [FromQuery] DateRange dateRange)
         {
-            IEnumerable<Product> mostSoldProducts =  this._orderService.GetTopNMostSoldProductsInDateRange(dateRange, numberOfProducts);
+            IEnumerable<Product> mostSoldProducts = this._orderService.GetTopNMostSoldProductsInDateRange(dateRange, numberOfProducts);
+
+            return Ok(mostSoldProducts.Select(product => new GetMostSoldProductResponse
+            {
+                Name = product.Name,
+                Revenue = this._orderService.GetRevenueInDateRangeForProductId(dateRange, product.Id)
+            }));
+        }
+
+        [HttpGet("lesssold/{numberOfProducts}")]
+        public ActionResult<IEnumerable<GetMostSoldProductResponse>> GetNLessSoldProducts(int numberOfProducts, [FromQuery] DateRange dateRange)
+        {
+            IEnumerable<Product> mostSoldProducts = this._orderService.GetTopNLessSoldProductsInDateRange(dateRange, numberOfProducts);
 
             return Ok(mostSoldProducts.Select(product => new GetMostSoldProductResponse
             {
