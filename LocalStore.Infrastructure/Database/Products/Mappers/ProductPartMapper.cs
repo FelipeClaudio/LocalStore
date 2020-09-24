@@ -1,4 +1,6 @@
-﻿using LocalStore.Domain.Models.ProductAggregate;
+﻿using LocalStore.Infrastructure.Database.Products.Models;
+using System.Linq;
+using ProductPart = LocalStore.Domain.Models.ProductAggregate.ProductPart;
 
 namespace LocalStore.Infrastructure.Database.Products.Mappers
 {
@@ -6,7 +8,17 @@ namespace LocalStore.Infrastructure.Database.Products.Mappers
     {
         public static ProductPart ToDomainModel(this Models.ProductPart productPart)
         {
-            return new ProductPart(productPart.Name, productPart.MeasuringUnit, productPart.Quantity, new Material(productPart.Material.Name, productPart.Material.Description));
+            return new ProductPart
+            (
+                productPart.Name,
+                productPart.MeasuringUnit,
+                productPart.Quantity,
+                productPart.ProductPartMaterials
+                    .Select(p => new Domain.Models.ProductAggregate.Material(
+                                    p.Material.Name,
+                                    p.Material.Description,
+                                    p.Material.Price)).ToList()
+            );
         }
 
         public static Models.ProductPart ToRepositoryModel(this ProductPart productPart)
@@ -15,11 +27,10 @@ namespace LocalStore.Infrastructure.Database.Products.Mappers
             {
                 MeasuringUnit = productPart.MeasuringUnit,
                 Name = productPart.Name,
-                Material = new Models.Material()
-                {
-                    Name = productPart.Material.Name,
-                    Description = productPart.Material.Description
-                }
+                ProductPartMaterials = productPart
+                    .Materials
+                    .Select(material => new ProductPartMaterial { Material = material.ToRepositoryModel() })
+                    .ToList()
             };
         }
     }

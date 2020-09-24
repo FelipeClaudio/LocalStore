@@ -1,13 +1,13 @@
-﻿using LocalStore.Domain.Models.OrderAggregate;
+﻿using FluentAssertions;
+using LocalStore.Commons.Models;
+using LocalStore.Domain.Models.OrderAggregate;
 using LocalStore.Domain.Models.ProductAggregate;
 using LocalStore.Domain.Services;
-using Xunit;
 using Moq;
-using System.Collections.Generic;
 using System;
-using FluentAssertions;
-using LocalStore.Commons.Models;
+using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace LocalStore.UnitTests.LocalStore.Domain.Services
 {
@@ -20,7 +20,7 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
         private readonly Mock<IProductRepository> _productRepositoryMock;
 
         private readonly List<Guid> _guidList;
-        
+
         private readonly OrderService _orderService;
 
         public OrderServiceTest()
@@ -46,7 +46,7 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
                 .Returns(this._getProductsListStub);
 
             for (int i = 0; i < this._getProductsListStub.Count; i++)
-            { 
+            {
                 this._productRepositoryMock
                     .Setup(p => p.GetProductById(this._getProductsListStub[i].Id))
                     .Returns(this._getProductsListStub[i]);
@@ -54,7 +54,7 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
 
 
             this._orderService = new OrderService(this._orderRespositoryMock.Object, this._productRepositoryMock.Object);
-        }    
+        }
 
         [InlineData("2020-03-04", "2020-05-06", 1)]
         [InlineData("2020-03-12", "2020-03-12", 2)]
@@ -133,8 +133,8 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
                     Name = "boring product",
                     ProductParts = new List<ProductPart>
                     {
-                        new ProductPart ("tire", "grams", 5 , new Material("latex", "malleable material")),
-                        new ProductPart ("battery", "grams", 1 , new Material("copper", "electronegative element"))
+                        new ProductPart ("tire", "grams", 5 , new List<Material> { new Material("latex", "malleable material", 1M) }),
+                        new ProductPart ("battery", "grams", 1 ,  new List<Material> { new Material("copper", "electronegative element", 2.5M) })
                     }
                 },
                 new Product(_guidList[1])
@@ -142,9 +142,9 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
                     Name = "ultra cool product",
                     ProductParts = new List<ProductPart>
                     {
-                        new ProductPart ("button", "grams", 10 , new Material("adamantium", "world's tougher material")),
-                        new ProductPart ("lighting bulb", "grams", 1 , new Material("uranium", "radioactive material")),
-                        new ProductPart ("power switch", "grams", 5 , new Material("carbon", "a nice conductor"))
+                        new ProductPart ("button", "grams", 10 , new List<Material> { new Material("adamantium", "world's tougher material", 3.2M) }),
+                        new ProductPart ("lighting bulb", "grams", 1 , new List<Material> { new Material("uranium", "radioactive material", 1.5M) }),
+                        new ProductPart ("power switch", "grams", 5 , new List<Material> { new Material("carbon", "a nice conductor", 2M) })
                     }
                 },
                 new Product(_guidList[2])
@@ -152,7 +152,7 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
                     Name = "new product",
                     ProductParts = new List<ProductPart>
                     {
-                        new ProductPart ("window", "grams", 300 , new Material("glass", "Extremely fragile"))
+                        new ProductPart ("window", "grams", 300 , new List<Material> { new Material("glass", "Extremely fragile", 4.2M) })
                     }
                 }
             };

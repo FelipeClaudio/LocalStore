@@ -1,13 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LocalStore.Infrastructure.Database.Products.Models
 {
     public class ProductPart : DatabaseEntityBase
     {
-        [Key]
-        public Guid Id { get; set; }
-
         [Required]
         public string Name { get; set; }
 
@@ -18,8 +17,8 @@ namespace LocalStore.Infrastructure.Database.Products.Models
         public decimal Quantity { get; set; }
 
         [Required]
-        public Product Product { get; set; }
+        public ICollection<ProductPartMaterial> ProductPartMaterials { get; set; }
 
-        public Material Material { get; set; }
+        public DateTime? ExpirationDate { get; set; }
     }
 }

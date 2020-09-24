@@ -1,62 +1,60 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace LocalStore.Infrastructure.Migrations.Product
+namespace LocalStore.Infrastructure.Migrations.Order
 {
     public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Products",
+                name: "Orders",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     CreationTime = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
-                    Name = table.Column<string>(nullable: false)
+                    OrderDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductParts",
+                name: "OrderItems",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     CreationTime = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
-                    Name = table.Column<string>(nullable: false),
-                    MeasuringUnit = table.Column<string>(nullable: false),
-                    Quantity = table.Column<decimal>(nullable: false),
                     ProductId = table.Column<Guid>(nullable: false),
-                    Material_Name = table.Column<string>(nullable: true),
-                    Material_Description = table.Column<string>(nullable: true)
+                    Quantity = table.Column<decimal>(nullable: false),
+                    UnitPrice = table.Column<decimal>(nullable: false),
+                    OrderId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductParts", x => x.Id);
+                    table.PrimaryKey("PK_OrderItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductParts_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
+                        name: "FK_OrderItems_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductParts_ProductId",
-                table: "ProductParts",
-                column: "ProductId");
+                name: "IX_OrderItems_OrderId",
+                table: "OrderItems",
+                column: "OrderId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ProductParts");
+                name: "OrderItems");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "Orders");
         }
     }
 }

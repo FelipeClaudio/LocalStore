@@ -11,7 +11,7 @@ namespace LocalStore.Commons.Definitions
 
         public Guid Id { get; }
 
-        public DateTime CreationDate { get; }
+        public DateTime CreationTime { get; }
 
         public override bool Equals(object obj)
         {

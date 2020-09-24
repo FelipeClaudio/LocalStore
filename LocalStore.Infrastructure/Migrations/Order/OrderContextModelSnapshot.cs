@@ -4,16 +4,14 @@ using LocalStore.Infrastructure.Database.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace LocalStore.Infrastructure.Migrations
+namespace LocalStore.Infrastructure.Migrations.Order
 {
     [DbContext(typeof(OrderContext))]
-    [Migration("20200917234218_InitialMigration")]
-    partial class InitialMigration
+    partial class OrderContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

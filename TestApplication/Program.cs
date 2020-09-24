@@ -20,9 +20,14 @@ namespace TestApplication
 
             var productsRespository = new ProductRepository(new ProductContext());
 
-            var partList = new List<ProductPart> {
-                    new ProductPart("Some-Part", "grams", 1, new Material ("Some-Material1", "Some-Description1")),
-                    new ProductPart("Some-Part", "grams", 1, new Material ("Some-Material2", "Some-Description2")),
+            var material1 = new Material("Some-Material1", "Some-Description1", 2.50M);
+            var material2 = new Material("Some-Material2", "Some-Description2", 4.75M);
+            var material3 = new Material("Some-Material3", "Some-Description3", 7.25M);
+
+            var partList = new List<ProductPart>
+            {
+                new ProductPart("Some-Part1", "grams", 1, new List<Material> {material1, material3}),
+                new ProductPart("Some-Part2", "grams", 1, new List<Material> {material2, material3}),
             };
 
             var product1 = new Product

@@ -5,12 +5,12 @@ namespace LocalStore.Domain.Models.ProductAggregate
 {
     public class ProductPart : ValueObject, IMeasurable
     {
-        public ProductPart(string name, string measuringUnit, decimal quantity, Material material)
+        public ProductPart(string name, string measuringUnit, decimal quantity, ICollection<Material> materials)
         {
             this.MeasuringUnit = measuringUnit;
             this.Quantity = quantity;
             this.Name = name;
-            this.Material = material;
+            this.Materials = materials;
         }
 
         public string Name { get; }
@@ -19,7 +19,7 @@ namespace LocalStore.Domain.Models.ProductAggregate
 
         public decimal Quantity { get; }
 
-        public Material Material { get; }
+        public ICollection<Material> Materials { get; }
 
         protected override IEnumerable<object> GetAtomicValues()
         {
@@ -28,7 +28,7 @@ namespace LocalStore.Domain.Models.ProductAggregate
             yield return Name;
             yield return MeasuringUnit;
             yield return Quantity;
-            yield return Material;
+            yield return Materials;
         }
     }
 }

@@ -9,10 +9,13 @@ namespace LocalStore.Domain.Models.ProductAggregate
 
         public string Description { get; }
 
-        public Material(string name, string description)
+        public decimal Price { get; set; }
+
+        public Material(string name, string description, decimal price)
         {
             Name = name;
             Description = description;
+            Price = price;
         }
 
         protected override IEnumerable<object> GetAtomicValues()
@@ -21,6 +24,7 @@ namespace LocalStore.Domain.Models.ProductAggregate
 
             yield return Name;
             yield return Description;
+            yield return Price;
         }
     }
 }

@@ -6,9 +6,6 @@ namespace LocalStore.Infrastructure.Database.Orders.Models
 {
     public class Order : DatabaseEntityBase
     {
-        [Key]
-        public Guid Id { get; set; }
-
         [Required]
         public virtual ICollection<OrderItem> Items { get; set; }
 

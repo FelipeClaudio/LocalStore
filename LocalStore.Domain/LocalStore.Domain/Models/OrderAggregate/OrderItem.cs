@@ -16,5 +16,7 @@ namespace LocalStore.Domain.Models.OrderAggregate
 
         [Required]
         public decimal UnitPrice { get; set; }
+
+        // TODO: Add extra costs example: delivering, stocking etc.
     }
 }

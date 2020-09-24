@@ -1,6 +1,5 @@
 ﻿using LocalStore.Infrastructure.Database.Orders.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace LocalStore.Infrastructure.Database.Orders
 {

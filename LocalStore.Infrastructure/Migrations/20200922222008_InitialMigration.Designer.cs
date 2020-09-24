@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace LocalStore.Infrastructure.Migrations.Product
+namespace LocalStore.Infrastructure.Migrations
 {
     [DbContext(typeof(ProductContext))]
-    [Migration("20200917234229_InitialMigration")]
+    [Migration("20200922222008_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,36 @@ namespace LocalStore.Infrastructure.Migrations.Product
                 .HasAnnotation("ProductVersion", "3.1.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("LocalStore.Infrastructure.Database.Products.Models.Material", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Materials");
+                });
 
             modelBuilder.Entity("LocalStore.Infrastructure.Database.Products.Models.Product", b =>
                 {
@@ -52,6 +82,9 @@ namespace LocalStore.Infrastructure.Migrations.Product
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getdate()");
 
+                    b.Property<Guid>("MaterialId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("MeasuringUnit")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -68,6 +101,8 @@ namespace LocalStore.Infrastructure.Migrations.Product
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MaterialId");
+
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductParts");
@@ -75,32 +110,17 @@ namespace LocalStore.Infrastructure.Migrations.Product
 
             modelBuilder.Entity("LocalStore.Infrastructure.Database.Products.Models.ProductPart", b =>
                 {
+                    b.HasOne("LocalStore.Infrastructure.Database.Products.Models.Material", "Material")
+                        .WithMany()
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("LocalStore.Infrastructure.Database.Products.Models.Product", "Product")
                         .WithMany("ProductParts")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.OwnsOne("LocalStore.Infrastructure.Database.Products.Models.Material", "Material", b1 =>
-                        {
-                            b1.Property<Guid>("ProductPartId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Description")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("ProductPartId");
-
-                            b1.ToTable("ProductParts");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ProductPartId");
-                        });
                 });
 #pragma warning restore 612, 618
         }

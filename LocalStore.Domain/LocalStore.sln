@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalStore.Domain", "LocalS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "etc", "etc", "{C2D839C8-23EC-4345-A654-B7C8D213A512}"
 	ProjectSection(SolutionItems) = preProject
-		Objetivos.txt = Objetivos.txt
+		..\Objetivos.txt = ..\Objetivos.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalStore.Application", "..\LocalStore.Application\LocalStore.Application.csproj", "{83D94623-AD36-4761-B630-3D1C8F7613A1}"

@@ -5,9 +5,6 @@ namespace LocalStore.Infrastructure.Database.Orders.Models
 {
     public class OrderItem : DatabaseEntityBase
     {
-        [Key]
-        public Guid Id { get; set; }
-
         [Required]
         public Guid ProductId { get; set; }
 

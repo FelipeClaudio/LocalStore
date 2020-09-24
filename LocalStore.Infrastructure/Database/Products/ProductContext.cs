@@ -19,11 +19,6 @@ namespace LocalStore.Infrastructure.Database.Products
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
-                .HasMany(p => p.ProductParts)
-                .WithOne(p => p.Product)
-                .IsRequired();
-
-            modelBuilder.Entity<Product>()
                 .HasKey(p => p.Id);
 
             modelBuilder.Entity<Product>()
@@ -34,14 +29,34 @@ namespace LocalStore.Infrastructure.Database.Products
                 .HasKey(p => p.Id);
 
             modelBuilder.Entity<ProductPart>()
-                .OwnsOne(p => p.Material);
-
-            modelBuilder.Entity<ProductPart>()
                 .Property(b => b.CreationTime)
+                .HasDefaultValueSql("getdate()");
+
+            modelBuilder.Entity<ProductPartMaterial>()
+                .HasKey(p => p.Id);
+
+            modelBuilder.Entity<ProductPartMaterial>()
+                .HasOne(p => p.Material)
+                .WithMany(p => p.ProductPartMaterials)
+                .HasForeignKey(p => p.MaterialId);
+
+            modelBuilder.Entity<ProductPartMaterial>()
+                .HasOne(p => p.ProductPart)
+                .WithMany(p => p.ProductPartMaterials)
+                .HasForeignKey(p => p.ProductPartId);
+
+            modelBuilder.Entity<ProductPartMaterial>()
+                .Property(m => m.CreationTime)
+                .HasDefaultValueSql("getdate()");
+
+            modelBuilder.Entity<Material>()
+                .Property(m => m.CreationTime)
                 .HasDefaultValueSql("getdate()");
         }
 
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductPart> ProductParts { get; set; }
+        public DbSet<ProductPartMaterial> ProductPartMaterials { get; set; }
+        public DbSet<Material> Materials { get; set; }
     }
 }
