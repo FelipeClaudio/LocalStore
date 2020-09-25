@@ -1,10 +1,7 @@
 ﻿using LocalStore.Application.Models;
-using LocalStore.Commons.Models;
-using LocalStore.Domain.Models.ProductAggregate;
 using LocalStore.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace LocalStore.Application.Controllers
 {

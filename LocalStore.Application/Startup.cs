@@ -1,14 +1,6 @@
 using LocalStore.Application.Extensions;
-using LocalStore.Domain.Models.OrderAggregate;
-using LocalStore.Domain.Models.ProductAggregate;
-using LocalStore.Domain.Services;
-using LocalStore.Infrastructure.Database.Orders;
-using LocalStore.Infrastructure.Database.Orders.Repositories;
-using LocalStore.Infrastructure.Database.Products;
-using LocalStore.Infrastructure.Database.Products.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

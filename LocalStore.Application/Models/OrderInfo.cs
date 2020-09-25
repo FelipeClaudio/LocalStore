@@ -1,5 +1,4 @@
-﻿using LocalStore.Domain.Models.OrderAggregate;
-using LocalStore.Domain.Models.ProductAggregate;
+﻿using LocalStore.Domain.Models.ProductAggregate;
 using System;
 using System.Collections.Generic;
 
@@ -22,6 +21,6 @@ namespace LocalStore.Application.Models
 
         public decimal UnityPrice { get; set; }
 
-        public Product Product { get; set; }  
+        public Product Product { get; set; }
     }
 }
