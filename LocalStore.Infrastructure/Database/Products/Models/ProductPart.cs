@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LocalStore.Infrastructure.Database.Products.Models
 {
@@ -15,6 +14,9 @@ namespace LocalStore.Infrastructure.Database.Products.Models
 
         [Required]
         public decimal Quantity { get; set; }
+
+        [Required]
+        public Guid ProductId { get; set; }
 
         [Required]
         public ICollection<ProductPartMaterial> ProductPartMaterials { get; set; }

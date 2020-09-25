@@ -7,12 +7,13 @@ using LocalStore.Infrastructure.Database.Products.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TestApplication
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             string connectionString = @"Data Source=BRRIOWN032980\SQLEXPRESS;Initial Catalog=LocalStore;Integrated Security=True";
             var productsOptionsBuilder = new DbContextOptionsBuilder();
@@ -36,6 +37,7 @@ namespace TestApplication
                 ProductParts = partList
             };
             productsRespository.Insert(product1);
+            await productsRespository.SaveChangesAsync(); 
 
             var product2 = new Product
             {
@@ -43,6 +45,7 @@ namespace TestApplication
                 ProductParts = partList
             };
             productsRespository.Insert(product2);
+            await productsRespository.SaveChangesAsync();
 
             var products = productsRespository.GetProducts();
 
@@ -61,6 +64,8 @@ namespace TestApplication
                 OrderDate = DateTime.Now
             };
             ordersRepository.Insert(order1);
+            await ordersRepository.SaveChangesAsync();
+
 
             var order2 = new Order
             {
@@ -76,6 +81,8 @@ namespace TestApplication
                 OrderDate = DateTime.Now
             };
             ordersRepository.Insert(order2);
+            await ordersRepository.SaveChangesAsync();
+
 
             var order3 = new Order
             {
@@ -91,6 +98,8 @@ namespace TestApplication
                 OrderDate = DateTime.Now
             };
             ordersRepository.Insert(order3);
+            await ordersRepository.SaveChangesAsync();
+
 
             var orders = ordersRepository.GetOrders();
         }

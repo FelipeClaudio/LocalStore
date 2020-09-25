@@ -1,5 +1,4 @@
 ﻿using LocalStore.Domain.Models.ProductAggregate;
-using System;
 using System.Linq;
 
 namespace LocalStore.Infrastructure.Database.Products.Mappers

@@ -5,6 +5,7 @@ namespace LocalStore.Infrastructure.Database.Orders.Models
 {
     public class OrderItem : DatabaseEntityBase
     {
+        // TODO: Product Id should refer to an existing product.
         [Required]
         public Guid ProductId { get; set; }
 

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LocalStore.Infrastructure.Database.Products.Repositories
 {
@@ -80,11 +81,9 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
                 .Select(p => p.ProductPartMaterials.Select(m => m.Material))
                 .SelectMany(m => m);
 
-            this.InsertMaterials(materials);
+            IEnumerable<Models.Material> insertedMaterials = this.InsertMaterials(materials);
 
-            this.InsertProductParts(product.ProductParts, product);
-
-            this._context.SaveChanges();
+            this.InsertProductParts(product.ProductParts, product, insertedMaterials);
         }
 
         private void InsertProduct(Models.Product product)
@@ -93,8 +92,6 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
             {
                 this._context.Products.Add(product);
             }
-
-            this._context.SaveChanges();
         }
 
         private bool ProductExists(Models.Product product)
@@ -102,7 +99,7 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
             return this._context.Products.Any(p => p.Name == product.Name);
         }
 
-        private void InsertProductParts(ICollection<Models.ProductPart> productParts, Models.Product product)
+        private void InsertProductParts(ICollection<Models.ProductPart> productParts, Models.Product product, IEnumerable<Models.Material> insertedMaterials)
         {
             foreach (Models.ProductPart productPart in productParts)
             {
@@ -110,7 +107,7 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
                 {
                     var materials = productPart.ProductPartMaterials.Join
                         (
-                            this._context.Materials,
+                            insertedMaterials,
                             productPartMaterial => productPartMaterial.Material.Name,
                             material => material.Name,
                             (productPartMaterial, material) => material
@@ -121,16 +118,16 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
                         {
                             ProductPart = productPart,
                             Material = material,
-                            ProductPartId = product.Id,
+                            ProductPartId = productPart.Id,
                             CreationTime = DateTime.Now,
                         }).ToList();
 
-                    this._context.ProductPartMaterials.AddRange(productPartMaterials);
+                  this._context.ProductPartMaterials.AddRange(productPartMaterials);
 
                     productPart.ProductPartMaterials = productPartMaterials.ToList();
+                    productPart.ProductId = product.Id;
 
                     this._context.ProductParts.Add(productPart);
-                    this._context.SaveChanges();
                 }
             }
         }
@@ -138,9 +135,9 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
         private bool ProductPartExists(Models.ProductPart productPart)
         {
             return this._context.ProductParts
-                        .Include(p => p.ProductPartMaterials)
-                        .ThenInclude(p => p.Material)
-                        .Any(p =>
+                       .Include(p => p.ProductPartMaterials)
+                       .ThenInclude(p => p.Material)
+                       .Any(p =>
                             p.Name == productPart.Name &&
                             p.Quantity == productPart.Quantity &&
                             p.MeasuringUnit == productPart.MeasuringUnit &&
@@ -149,12 +146,13 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
             // TODO: Validate product name.
         }
 
-        private void InsertMaterials(IEnumerable<Models.Material> materials)
+        private IEnumerable<Models.Material> InsertMaterials(IEnumerable<Models.Material> materials)
         {
-            IEnumerable<Models.Material> notInsertedMaterials = materials.Where(material => !MaterialExistsAndIsValid(material));
+            IEnumerable<Models.Material> notExistentMaterial = materials.Where(material => !MaterialExistsAndIsValid(material));
 
-            this._context.Materials.AddRange(notInsertedMaterials);
-            this._context.SaveChanges();
+            this._context.Materials.AddRange(notExistentMaterial);
+
+            return notExistentMaterial;
         }
 
         private bool MaterialExistsAndIsValid(Models.Material material)
@@ -168,6 +166,11 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
         {
             Models.Product product = this._context.Products.FirstOrDefault(p => p.Id == id);
             this._context.Products.Remove(product);
+        }
+
+        public Task SaveChangesAsync()
+        {
+            return this._context.SaveChangesAsync();
         }
     }
 }

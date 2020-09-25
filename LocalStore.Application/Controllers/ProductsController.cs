@@ -12,35 +12,17 @@ namespace LocalStore.Application.Controllers
     [Route("[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly IOrderService _orderService;
+        private readonly IProductService _productService;
 
-        public ProductsController(IOrderService orderService)
+        public ProductsController(IProductService productService)
         {
-            this._orderService = orderService;
+            this._productService = productService;
         }
 
-        [HttpGet("mostsold/{numberOfProducts}")]
-        public ActionResult<IEnumerable<GetMostSoldProductResponse>> GetNMostSoldProducts(int numberOfProducts, [FromQuery] DateRange dateRange)
+        [HttpGet]
+        public ActionResult<IEnumerable<OrderInfo>> GetAllProducts()
         {
-            IEnumerable<Product> mostSoldProducts = this._orderService.GetTopNMostSoldProductsInDateRange(dateRange, numberOfProducts);
-
-            return Ok(mostSoldProducts.Select(product => new GetMostSoldProductResponse
-            {
-                Name = product.Name,
-                Revenue = this._orderService.GetRevenueInDateRangeForProductId(dateRange, product.Id)
-            }));
-        }
-
-        [HttpGet("lesssold/{numberOfProducts}")]
-        public ActionResult<IEnumerable<GetMostSoldProductResponse>> GetNLessSoldProducts(int numberOfProducts, [FromQuery] DateRange dateRange)
-        {
-            IEnumerable<Product> mostSoldProducts = this._orderService.GetTopNLessSoldProductsInDateRange(dateRange, numberOfProducts);
-
-            return Ok(mostSoldProducts.Select(product => new GetMostSoldProductResponse
-            {
-                Name = product.Name,
-                Revenue = this._orderService.GetRevenueInDateRangeForProductId(dateRange, product.Id)
-            }));
+            return Ok(this._productService.GetAllProducts());
         }
     }
 }

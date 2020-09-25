@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LocalStore.Infrastructure.Migrations
 {
     [DbContext(typeof(ProductContext))]
-    [Migration("20200924005809_DefaultDateTimeToProductPartMaterialTable")]
-    partial class DefaultDateTimeToProductPartMaterialTable
+    [Migration("20200925021352_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

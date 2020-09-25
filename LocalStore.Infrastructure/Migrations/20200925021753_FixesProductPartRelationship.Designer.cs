@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LocalStore.Infrastructure.Migrations
 {
     [DbContext(typeof(ProductContext))]
-    [Migration("20200924000022_AddedProductPartMaterialTable")]
-    partial class AddedProductPartMaterialTable
+    [Migration("20200925021753_FixesProductPartRelationship")]
+    partial class FixesProductPartRelationship
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -93,7 +93,7 @@ namespace LocalStore.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ProductId")
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Quantity")
@@ -114,7 +114,8 @@ namespace LocalStore.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreationTime")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<Guid>("MaterialId")
                         .HasColumnType("uniqueidentifier");
@@ -133,9 +134,11 @@ namespace LocalStore.Infrastructure.Migrations
 
             modelBuilder.Entity("LocalStore.Infrastructure.Database.Products.Models.ProductPart", b =>
                 {
-                    b.HasOne("LocalStore.Infrastructure.Database.Products.Models.Product", null)
+                    b.HasOne("LocalStore.Infrastructure.Database.Products.Models.Product", "Product")
                         .WithMany("ProductParts")
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LocalStore.Infrastructure.Database.Products.Models.ProductPartMaterial", b =>

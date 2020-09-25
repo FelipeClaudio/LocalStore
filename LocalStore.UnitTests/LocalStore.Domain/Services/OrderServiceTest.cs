@@ -142,8 +142,11 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
                     Name = "ultra cool product",
                     ProductParts = new List<ProductPart>
                     {
-                        new ProductPart ("button", "grams", 10 , new List<Material> { new Material("adamantium", "world's tougher material", 3.2M) }),
-                        new ProductPart ("lighting bulb", "grams", 1 , new List<Material> { new Material("uranium", "radioactive material", 1.5M) }),
+                        new ProductPart ("button", "grams", 10 , new List<Material>
+                        {
+                            new Material("adamantium", "world's tougher material", 3.2M),
+                            new Material("uranium", "radioactive material", 1.5M) 
+                        }),
                         new ProductPart ("power switch", "grams", 5 , new List<Material> { new Material("carbon", "a nice conductor", 2M) })
                     }
                 },

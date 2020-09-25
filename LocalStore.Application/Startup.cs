@@ -1,3 +1,4 @@
+using LocalStore.Application.Extensions;
 using LocalStore.Domain.Models.OrderAggregate;
 using LocalStore.Domain.Models.ProductAggregate;
 using LocalStore.Domain.Services;
@@ -27,15 +28,11 @@ namespace LocalStore.Application
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string ordersDbConnectionString = Configuration.GetConnectionString("OrdersDb");
-            string productsDbConnectionString = Configuration.GetConnectionString("ProductsDb");
-
             services.AddControllers();
-            services.AddDbContext<OrderContext>(options => options.UseSqlServer(ordersDbConnectionString));
-            services.AddDbContext<ProductContext>(options => options.UseSqlServer(productsDbConnectionString));
-            services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<IOrderRepository, OrderRepository>();
-            services.AddScoped<IOrderService, OrderService>();
+
+            services.AddProductAggregate(Configuration);
+            services.AddOrderAggregate(Configuration);
+
             services.AddSwaggerGen();
         }
 

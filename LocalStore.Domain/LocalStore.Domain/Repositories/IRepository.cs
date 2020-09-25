@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace LocalStore.Domain.Repositories
 {
@@ -6,5 +7,6 @@ namespace LocalStore.Domain.Repositories
     {
         void DeleteById(Guid id);
         void Insert(T entity);
+        Task SaveChangesAsync();
     }
 }

@@ -91,7 +91,7 @@ namespace LocalStore.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ProductId")
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Quantity")
@@ -134,7 +134,9 @@ namespace LocalStore.Infrastructure.Migrations
                 {
                     b.HasOne("LocalStore.Infrastructure.Database.Products.Models.Product", null)
                         .WithMany("ProductParts")
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LocalStore.Infrastructure.Database.Products.Models.ProductPartMaterial", b =>

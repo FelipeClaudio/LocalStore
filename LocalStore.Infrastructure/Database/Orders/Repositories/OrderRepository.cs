@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LocalStore.Infrastructure.Database.Orders.Repositories
 {
@@ -21,7 +22,6 @@ namespace LocalStore.Infrastructure.Database.Orders.Repositories
         {
             Order order = this.GetOrderById(id);
             this._context.Orders.Remove(order.ToRepositoryModel());
-            this._context.SaveChanges();
         }
 
         public IList<Order> GetOrders()
@@ -49,6 +49,11 @@ namespace LocalStore.Infrastructure.Database.Orders.Repositories
         {
             this._context.Orders.Add(entity.ToRepositoryModel());
             this._context.SaveChanges();
+        }
+
+        public Task SaveChangesAsync()
+        {
+            return this._context.SaveChangesAsync();
         }
     }
 }

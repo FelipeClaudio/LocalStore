@@ -8,7 +8,9 @@ namespace LocalStore.Domain.Models.OrderAggregate
     public interface IOrderRepository : IRepository<Order>
     {
         IList<Order> GetOrders();
+        
         IList<Order> GetOrdersInDateRange(DateRange dateRange);
+        
         Order GetOrderById(Guid id);
     }
 }

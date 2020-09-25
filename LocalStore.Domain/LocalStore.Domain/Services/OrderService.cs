@@ -4,6 +4,7 @@ using LocalStore.Domain.Models.ProductAggregate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LocalStore.Domain.Services
 {
@@ -54,6 +55,34 @@ namespace LocalStore.Domain.Services
             IEnumerable<OrderItem> orderItems = ordersInDateRange.SelectMany(o => o.Items);
 
             return orderItems;
+        }
+
+        public async Task InsertOrder(Order order)
+        {
+            IEnumerable<Guid> productIds = order.Items.Select(i => i.ProductId);
+            if (AllProductsExist(productIds))
+            {
+                // Sets order date if not previously set.
+                order.OrderDate = order.OrderDate != default ? order.OrderDate : DateTime.Now;
+                
+                this._orderRepository.Insert(order);
+
+                await this._orderRepository.SaveChangesAsync();
+            }
+        }
+
+        private bool AllProductsExist(IEnumerable<Guid> productIds)
+        {
+            return this._productRepository
+                        .GetProducts()
+                        .Select(p => p.Id)
+                        .Intersect(productIds)
+                        .Count() == productIds.Count();
+        }
+
+        public IEnumerable<Order> GetAllOrdersForDateRange(DateRange dateRange)
+        {
+            return this._orderRepository.GetOrdersInDateRange(dateRange);
         }
     }
 }
