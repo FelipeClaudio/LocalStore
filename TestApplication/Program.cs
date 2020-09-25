@@ -25,16 +25,22 @@ namespace TestApplication
             var material2 = new Material("Some-Material2", "Some-Description2", 4.75M);
             var material3 = new Material("Some-Material3", "Some-Description3", 7.25M);
 
-            var partList = new List<ProductPart>
+            var partList1 = new List<ProductPart>
             {
                 new ProductPart("Some-Part1", "grams", 1, new List<Material> {material1, material3}),
                 new ProductPart("Some-Part2", "grams", 1, new List<Material> {material2, material3}),
             };
 
+            var partList2 = new List<ProductPart>
+            {
+                new ProductPart("Some-Part1", "grams", 1, new List<Material> {material1, material3}),
+                new ProductPart("Some-Part3", "grams", 1, new List<Material> {material2, material3, material1}),
+            };
+
             var product1 = new Product
             {
                 Name = "Some-Product1",
-                ProductParts = partList
+                ProductParts = partList1
             };
             productsRespository.Insert(product1);
             await productsRespository.SaveChangesAsync(); 
@@ -42,7 +48,7 @@ namespace TestApplication
             var product2 = new Product
             {
                 Name = "Some-Product2",
-                ProductParts = partList
+                ProductParts = partList2
             };
             productsRespository.Insert(product2);
             await productsRespository.SaveChangesAsync();

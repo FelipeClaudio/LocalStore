@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace LocalStore.Infrastructure.Database.Products.Models
 {

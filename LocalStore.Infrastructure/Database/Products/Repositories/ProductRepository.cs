@@ -75,23 +75,26 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
             var productClone = product.DeepClone();
             productClone.ProductParts = null;
             
-            this.InsertProduct(productClone);
+            if (this.InsertProduct(productClone))
+            {
+                IEnumerable<Models.Material> materials = product.ProductParts
+                    .Select(p => p.ProductPartMaterials.Select(m => m.Material))
+                    .SelectMany(m => m);
 
-            IEnumerable<Models.Material> materials = product.ProductParts
-                .Select(p => p.ProductPartMaterials.Select(m => m.Material))
-                .SelectMany(m => m);
+                this.InsertMaterials(materials);
 
-            IEnumerable<Models.Material> insertedMaterials = this.InsertMaterials(materials);
-
-            this.InsertProductParts(product.ProductParts, product, insertedMaterials);
+                this.InsertProductParts(product);
+            }
         }
 
-        private void InsertProduct(Models.Product product)
+        private bool InsertProduct(Models.Product product)
         {
             if (!ProductExists(product))
             {
                 this._context.Products.Add(product);
+                return true;
             }
+            return false;
         }
 
         private bool ProductExists(Models.Product product)
@@ -99,51 +102,34 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
             return this._context.Products.Any(p => p.Name == product.Name);
         }
 
-        private void InsertProductParts(ICollection<Models.ProductPart> productParts, Models.Product product, IEnumerable<Models.Material> insertedMaterials)
+        private void InsertProductParts(Models.Product product)
         {
-            foreach (Models.ProductPart productPart in productParts)
+            foreach (Models.ProductPart productPart in product.ProductParts)
             {
-                if (!this.ProductPartExists(productPart))
-                {
-                    var materials = productPart.ProductPartMaterials.Join
-                        (
-                            insertedMaterials,
-                            productPartMaterial => productPartMaterial.Material.Name,
-                            material => material.Name,
-                            (productPartMaterial, material) => material
-                        );
+                var materials = productPart.ProductPartMaterials.Join
+                    (
+                        this._context.Materials,
+                        productPartMaterial => productPartMaterial.Material.Name,
+                        material => material.Name,
+                        (productPartMaterial, material) => material
+                    );
 
-                    var productPartMaterials = materials.Select(material =>
-                        new ProductPartMaterial
-                        {
-                            ProductPart = productPart,
-                            Material = material,
-                            ProductPartId = productPart.Id,
-                            CreationTime = DateTime.Now,
-                        }).ToList();
+                var productPartMaterials = materials.Select(material =>
+                    new ProductPartMaterial
+                    {
+                        ProductPart = productPart,
+                        Material = material,
+                        ProductPartId = productPart.Id,
+                        CreationTime = DateTime.Now,
+                    }).ToList();
 
-                  this._context.ProductPartMaterials.AddRange(productPartMaterials);
+                this._context.ProductPartMaterials.AddRange(productPartMaterials);
 
-                    productPart.ProductPartMaterials = productPartMaterials.ToList();
-                    productPart.ProductId = product.Id;
+                productPart.ProductPartMaterials = productPartMaterials.ToList();
+                productPart.ProductId = product.Id;
 
-                    this._context.ProductParts.Add(productPart);
-                }
+                this._context.ProductParts.Add(productPart);
             }
-        }
-
-        private bool ProductPartExists(Models.ProductPart productPart)
-        {
-            return this._context.ProductParts
-                       .Include(p => p.ProductPartMaterials)
-                       .ThenInclude(p => p.Material)
-                       .Any(p =>
-                            p.Name == productPart.Name &&
-                            p.Quantity == productPart.Quantity &&
-                            p.MeasuringUnit == productPart.MeasuringUnit &&
-                            p.ExpirationDate == null);
-
-            // TODO: Validate product name.
         }
 
         private IEnumerable<Models.Material> InsertMaterials(IEnumerable<Models.Material> materials)
@@ -151,6 +137,9 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
             IEnumerable<Models.Material> notExistentMaterial = materials.Where(material => !MaterialExistsAndIsValid(material));
 
             this._context.Materials.AddRange(notExistentMaterial);
+
+            // TODO: Remove this save changes.
+            this._context.SaveChanges();
 
             return notExistentMaterial;
         }
