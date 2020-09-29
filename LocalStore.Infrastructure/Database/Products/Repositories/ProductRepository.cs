@@ -74,17 +74,17 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
             // avoids inserting children elements
             var productClone = product.DeepClone();
             productClone.ProductParts = null;
-            
-            if (this.InsertProduct(productClone))
-            {
-                IEnumerable<Models.Material> materials = product.ProductParts
-                    .Select(p => p.ProductPartMaterials.Select(m => m.Material))
-                    .SelectMany(m => m);
 
-                this.InsertMaterials(materials);
+            this.InsertProduct(productClone);
 
-                this.InsertProductParts(product);
-            }
+            IEnumerable<Models.Material> materials = product.ProductParts
+                .Select(p => p.ProductPartMaterials.Select(m => m.Material))
+                .SelectMany(m => m);
+
+            this.InsertMaterials(materials);
+
+            this.InsertProductParts(product);
+
         }
 
         private bool InsertProduct(Models.Product product)
@@ -117,8 +117,7 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
                 var productPartMaterials = materials.Select(material =>
                     new ProductPartMaterial
                     {
-                        ProductPart = productPart,
-                        Material = material,
+                        MaterialId = material.Id,
                         ProductPartId = productPart.Id,
                         CreationTime = DateTime.Now,
                     }).ToList();
@@ -127,6 +126,7 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
 
                 productPart.ProductPartMaterials = productPartMaterials.ToList();
                 productPart.ProductId = product.Id;
+                this._context.Entry(productPart).State = EntityState.Detached;
 
                 this._context.ProductParts.Add(productPart);
             }
@@ -134,14 +134,19 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
 
         private IEnumerable<Models.Material> InsertMaterials(IEnumerable<Models.Material> materials)
         {
-            IEnumerable<Models.Material> notExistentMaterial = materials.Where(material => !MaterialExistsAndIsValid(material));
+            IEnumerable<Models.Material> notExistentMaterials = materials.Where(material => !MaterialExistsAndIsValid(material))
+                                                                         .GroupBy(material => material.Name)
+                                                                         .Select(material => material.FirstOrDefault());
 
-            this._context.Materials.AddRange(notExistentMaterial);
+            this._context.Materials.AddRange(notExistentMaterials);
 
             // TODO: Remove this save changes.
+            // This line simplifies ProductPartMaterials object assembly 
+            // because it is only necessary to look for materials in one place (database),
+            // instead of combining database and memory search.
             this._context.SaveChanges();
 
-            return notExistentMaterial;
+            return notExistentMaterials;
         }
 
         private bool MaterialExistsAndIsValid(Models.Material material)

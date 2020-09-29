@@ -50,6 +50,9 @@ namespace LocalStore.Infrastructure.Database.Products
                 .HasDefaultValueSql("getdate()");
 
             modelBuilder.Entity<Material>()
+                .HasKey(m => m.Id);
+
+            modelBuilder.Entity<Material>()
                 .Property(m => m.CreationTime)
                 .HasDefaultValueSql("getdate()");
         }

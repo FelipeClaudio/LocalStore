@@ -1,7 +1,7 @@
-drop table OrderItems
-drop table Orders
-drop table ProductPartMaterials
-drop table Materials
-drop table Products
-drop table ProductParts
-drop table __EFMigrationsHistory
+delete from OrderItems
+delete from Orders
+delete from ProductPartMaterials
+delete from Materials
+delete from Products
+delete from ProductParts
+delete from __EFMigrationsHistory

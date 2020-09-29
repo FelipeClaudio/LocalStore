@@ -27,14 +27,14 @@ namespace TestApplication
 
             var partList1 = new List<ProductPart>
             {
-                new ProductPart("Some-Part1", "grams", 1, new List<Material> {material1, material3}),
-                new ProductPart("Some-Part2", "grams", 1, new List<Material> {material2, material3}),
+                new ProductPart("Some-Part1", "grams", 1.0M, new List<Material> {material1, material3}),
+                new ProductPart("Some-Part2", "grams", 3.0M, new List<Material> {material2, material3}),
             };
 
             var partList2 = new List<ProductPart>
             {
-                new ProductPart("Some-Part1", "grams", 1, new List<Material> {material1, material3}),
-                new ProductPart("Some-Part3", "grams", 1, new List<Material> {material2, material3, material1}),
+                new ProductPart("Some-Part1", "grams", 6.0M, new List<Material> {material1, material3}),
+                new ProductPart("Some-Part3", "grams", 5.0M, new List<Material> {material2, material3, material1}),
             };
 
             var product1 = new Product
