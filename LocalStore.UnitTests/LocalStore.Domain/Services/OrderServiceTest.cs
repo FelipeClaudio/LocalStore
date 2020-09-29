@@ -3,6 +3,7 @@ using LocalStore.Commons.Models;
 using LocalStore.Domain.Models.OrderAggregate;
 using LocalStore.Domain.Models.ProductAggregate;
 using LocalStore.Domain.Services;
+using LocalStore.UnitTests.Helpers;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -13,27 +14,18 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
 {
     public class OrderServiceTest
     {
-        private List<Order> _ordersInDateRangeStub;
-        private List<Product> _getProductsListStub;
+        private readonly List<Order> _ordersInDateRangeStub;
+        private readonly List<Product> _productListStub;
 
         private readonly Mock<IOrderRepository> _orderRespositoryMock;
         private readonly Mock<IProductRepository> _productRepositoryMock;
 
-        private readonly List<Guid> _guidList;
-
-        private readonly OrderService _orderService;
+        private readonly OrderService _service;
 
         public OrderServiceTest()
         {
-            this._guidList = new List<Guid>
-            {
-                new Guid("62FA647C-AD54-4BCC-A860-E5A2664B0191"),
-                new Guid("62FA647C-AD54-4BCC-A860-E5A2664B0192"),
-                new Guid("62FA647C-AD54-4BCC-A860-E5A2664B0193")
-            };
-
-            CreateOrdersListStub();
-            CreateProductsListStub();
+            this._ordersInDateRangeStub = StubGenerator.GetOrdersListStub();
+            this._productListStub = StubGenerator.GetProductsListStub();
 
             this._orderRespositoryMock = new Mock<IOrderRepository>();
             this._orderRespositoryMock
@@ -43,17 +35,17 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
             this._productRepositoryMock = new Mock<IProductRepository>();
             this._productRepositoryMock
                 .Setup(p => p.GetProducts())
-                .Returns(this._getProductsListStub);
+                .Returns(this._productListStub);
 
-            for (int i = 0; i < this._getProductsListStub.Count; i++)
+            for (int i = 0; i < this._productListStub.Count; i++)
             {
                 this._productRepositoryMock
-                    .Setup(p => p.GetProductById(this._getProductsListStub[i].Id))
-                    .Returns(this._getProductsListStub[i]);
+                    .Setup(p => p.GetProductById(this._productListStub[i].Id))
+                    .Returns(this._productListStub[i]);
             }
 
 
-            this._orderService = new OrderService(this._orderRespositoryMock.Object, this._productRepositoryMock.Object);
+            this._service = new OrderService(this._orderRespositoryMock.Object, this._productRepositoryMock.Object);
         }
 
         [InlineData("2020-03-04", "2020-05-06", 1)]
@@ -66,9 +58,9 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
             // Arrange
             List<Product> expectedProducts = new List<Product>
             {
-                this._getProductsListStub[1],
-                this._getProductsListStub[2],
-                this._getProductsListStub[0]
+                this._productListStub[1],
+                this._productListStub[2],
+                this._productListStub[0]
             };
 
             var dateRange = new DateRange
@@ -78,7 +70,7 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
             };
 
             // Act
-            IEnumerable<Product> mostSoldProducts = this._orderService.GetTopNMostSoldProductsInDateRange(dateRange, numberOfProducts);
+            IEnumerable<Product> mostSoldProducts = this._service.GetTopNMostSoldProductsInDateRange(dateRange, numberOfProducts);
 
             // Assert
             mostSoldProducts.Should().BeEquivalentTo(expectedProducts.Take(numberOfProducts));
@@ -100,9 +92,9 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
             // Arrange
             List<Product> expectedProducts = new List<Product>
             {
-                this._getProductsListStub[0],
-                this._getProductsListStub[2],
-                this._getProductsListStub[1]
+                this._productListStub[0],
+                this._productListStub[2],
+                this._productListStub[1]
             };
 
             var dateRange = new DateRange
@@ -112,7 +104,7 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
             };
 
             // Act
-            IEnumerable<Product> mostSoldProducts = this._orderService.GetTopNLessSoldProductsInDateRange(dateRange, numberOfProducts);
+            IEnumerable<Product> mostSoldProducts = this._service.GetTopNLessSoldProductsInDateRange(dateRange, numberOfProducts);
 
             // Assert
             mostSoldProducts.Should().BeEquivalentTo(expectedProducts.Take(numberOfProducts));
@@ -122,81 +114,6 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
             {
                 this._productRepositoryMock.Verify(p => p.GetProductById(expectedProducts[i].Id), Times.Once);
             }
-        }
-
-        private void CreateProductsListStub()
-        {
-            this._getProductsListStub = new List<Product>
-            {
-                new Product(_guidList[0])
-                {
-                    Name = "boring product",
-                    ProductParts = new List<ProductPart>
-                    {
-                        new ProductPart ("tire", "grams", 5 , new List<Material> { new Material("latex", "malleable material", 1M) }),
-                        new ProductPart ("battery", "grams", 1 ,  new List<Material> { new Material("copper", "electronegative element", 2.5M) })
-                    }
-                },
-                new Product(_guidList[1])
-                {
-                    Name = "ultra cool product",
-                    ProductParts = new List<ProductPart>
-                    {
-                        new ProductPart ("button", "grams", 10 , new List<Material>
-                        {
-                            new Material("adamantium", "world's tougher material", 3.2M),
-                            new Material("uranium", "radioactive material", 1.5M) 
-                        }),
-                        new ProductPart ("power switch", "grams", 5 , new List<Material> { new Material("carbon", "a nice conductor", 2M) })
-                    }
-                },
-                new Product(_guidList[2])
-                {
-                    Name = "new product",
-                    ProductParts = new List<ProductPart>
-                    {
-                        new ProductPart ("window", "grams", 300 , new List<Material> { new Material("glass", "Extremely fragile", 4.2M) })
-                    }
-                }
-            };
-        }
-
-        private void CreateOrdersListStub()
-        {
-            this._ordersInDateRangeStub = new List<Order>
-            {
-                new Order
-                {
-                    Items = new List<OrderItem>
-                    {
-                        new OrderItem
-                        {
-                            ProductId = this._guidList[2],
-                            Quantity = 3,
-                            UnitPrice = 5
-                        },
-                        new OrderItem
-                        {
-                            ProductId = this._guidList[1],
-                            Quantity = 10,
-                            UnitPrice = 2
-                        },
-                        new OrderItem
-                        {
-                            ProductId = this._guidList[0],
-                            Quantity = 1,
-                            UnitPrice = 30
-                        },
-                        new OrderItem
-                        {
-                            ProductId = this._guidList[2],
-                            Quantity = 2,
-                            UnitPrice = 60
-                        }
-                    },
-                    OrderDate = new DateTime(2020, 3, 12)
-                }
-            };
         }
     }
 }
