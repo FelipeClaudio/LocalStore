@@ -29,6 +29,7 @@ namespace LocalStore.Application.Controllers
             var orderInfos = ordersInDateRange.Select(order => new OrderInfo
             {
                 OrderDate = order.OrderDate,
+                OrderId = order.Id,
                 OrderItemInfos = order.Items.Select(orderItem => new OrderItemInfo
                 {
                     OrderItemId = orderItem.Id,
