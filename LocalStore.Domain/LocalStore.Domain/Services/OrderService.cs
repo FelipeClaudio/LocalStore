@@ -80,7 +80,7 @@ namespace LocalStore.Domain.Services
                         .Count() == productIds.Count();
         }
 
-        public IEnumerable<Order> GetAllOrdersForDateRange(DateRange dateRange)
+        public IEnumerable<Order> GetAllOrdersInDateRange(DateRange dateRange)
         {
             return this._orderRepository.GetOrdersInDateRange(dateRange);
         }

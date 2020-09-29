@@ -115,5 +115,48 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
                 this._productRepositoryMock.Verify(p => p.GetProductById(expectedProducts[i].Id), Times.Once);
             }
         }
+
+        [Fact(DisplayName = "Feature: OrderService. | Given: ValidDateRange. | When: GetAllOrdersForDateRange. | Should: Return all orders for date range.")]
+
+        public void GetAllOrdersForDateRange_ValidDateRange_ShouldReturnMostSoldProductForDateRange()
+        {
+            // Arrange
+            var dateRange = new DateRange
+            {
+                InitialDate = DateTime.Parse("2020-01-01"),
+                FinalDate = DateTime.Parse("2020-12-31")
+            };
+
+            // Act
+            IEnumerable<Order> ordersInDateRange = this._service.GetAllOrdersInDateRange(dateRange);
+
+            // Assert
+            ordersInDateRange.Should().BeEquivalentTo(this._ordersInDateRangeStub);
+            this._orderRespositoryMock.Verify(o => o.GetOrdersInDateRange(dateRange), Times.Once);
+        }
+
+        [Theory(DisplayName = "Feature: OrderService. | Given: ValidDateRange. | When: GetAllOrdersForDateRange. | Should: Return all orders for date range.")]
+        [InlineData(0, 30.0)]
+        [InlineData(1, 20.0)]
+        [InlineData(2, 135.0)]
+        public void GetReveneuInDateRangeForProductId_ValidDateRange_ShouldRevenueInDateRangeForProductId(int elementId, decimal expectedRevenue)
+        {
+            // Arrange
+            var dateRange = new DateRange
+            {
+                InitialDate = DateTime.Parse("2020-01-01"),
+                FinalDate = DateTime.Parse("2020-12-31")
+            };
+
+            var selectedProduct = this._productListStub[elementId];
+            // Act
+            decimal calculatedRevenue = this._service.GetRevenueInDateRangeForProductId(dateRange, selectedProduct.Id);
+
+            // Assert
+            calculatedRevenue.Should().Be(expectedRevenue);
+            this._orderRespositoryMock.Verify(o => o.GetOrdersInDateRange(dateRange), Times.Once);
+        }
+
+        // TODO: test InsertOrder method.
     }
 }

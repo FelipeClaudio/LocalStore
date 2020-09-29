@@ -43,6 +43,7 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
 
             // Assert
             products.Should().BeEquivalentTo(this._productListStub);
+            this._productRepositoryMock.Verify(p => p.GetProducts(), Times.Once);
         }
 
         [Fact(DisplayName = "Feature: ProductService. | Given: Always. | When: GetProductById. | Should: Return chosen product.")]
@@ -56,6 +57,7 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
 
             // Assert
             products.Should().BeEquivalentTo(expectedProduct);
+            this._productRepositoryMock.Verify(p => p.GetProductById(expectedProduct.Id), Times.Once);
         }
 
         [Fact(DisplayName = "Feature: ProductService. | Given: Always. | When: InsertProduct. | Should: Insert product.")]

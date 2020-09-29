@@ -17,6 +17,6 @@ namespace LocalStore.Domain.Services
         
         Task InsertOrder(Order order);
         
-        IEnumerable<Order> GetAllOrdersForDateRange(DateRange dateRange);
+        IEnumerable<Order> GetAllOrdersInDateRange(DateRange dateRange);
     }
 }

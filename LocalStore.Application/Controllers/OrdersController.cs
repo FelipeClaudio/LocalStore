@@ -25,7 +25,7 @@ namespace LocalStore.Application.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<OrderInfo>> GetAllOrdersInDateRange([FromQuery] DateRange dateRange)
         {
-            IEnumerable<Order> ordersInDateRange = this._orderService.GetAllOrdersForDateRange(dateRange);
+            IEnumerable<Order> ordersInDateRange = this._orderService.GetAllOrdersInDateRange(dateRange);
             var orderInfos = ordersInDateRange.Select(order => new OrderInfo
             {
                 OrderDate = order.OrderDate,
