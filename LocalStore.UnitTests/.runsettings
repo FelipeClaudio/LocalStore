@@ -27,6 +27,7 @@
 							  <Function>.*\Program\..*</Function>
 							  <Function>.*\Startup\..*</Function>
 							  <Function>.*\.*Controller\..*</Function>
+							  <Function>.*\.*Models\..*</Function>
 							  <Function>.*\ConfigurationBuilderExtensions\..*</Function>
 						  </Exclude>
 					  </Functions>

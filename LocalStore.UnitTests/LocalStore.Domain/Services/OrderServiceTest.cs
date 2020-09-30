@@ -8,6 +8,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace LocalStore.UnitTests.LocalStore.Domain.Services
@@ -157,6 +158,80 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
             this._orderRespositoryMock.Verify(o => o.GetOrdersInDateRange(dateRange), Times.Once);
         }
 
-        // TODO: test InsertOrder method.
+        [Fact(DisplayName = "Feature: OrderService. | Given: Inexistent product. | When: InsertOrder. | Should: Not insert order.")]
+        public async Task InsertOrder_InexistentProduct_ShouldNotInsertOrder()
+        {
+            // Arrange
+            var order = new Order
+            {
+                Items = new List<OrderItem>
+                {
+                    new OrderItem
+                    {
+                        ProductId = Guid.Empty
+                    }
+                }
+            };
+
+            // Act
+            await this._service.InsertOrder(order);
+
+            // Assert
+            this._productRepositoryMock.Verify(p => p.GetProducts(), Times.Once);
+            this._orderRespositoryMock.Verify(o => o.Insert(It.IsAny<Order>()), Times.Never);
+            this._orderRespositoryMock.Verify(o => o.SaveChangesAsync(), Times.Never);
+        }
+
+        [Fact(DisplayName = "Feature: OrderService. | Given: Existent product and order with no date. | When: InsertOrder. | Should: Insert order with current time.")]
+        public async Task InsertOrder_ExistentProductAndOrderWithNoDate_ShouldInsertOrderWithCurrentTime()
+        {
+            // Arrange
+            var order = new Order
+            {
+                Items = new List<OrderItem>
+                {
+                    new OrderItem
+                    {
+                        ProductId = this._productListStub[0].Id
+                    }
+                }
+            };
+
+            // Act
+            await this._service.InsertOrder(order);
+
+            // Assert
+            this._productRepositoryMock.Verify(p => p.GetProducts(), Times.Once);
+            this._orderRespositoryMock.Verify(o => o.Insert(order), Times.Once);
+            this._orderRespositoryMock.Verify(o => o.SaveChangesAsync(), Times.Once);
+            order.OrderDate.Should().NotBe(default);
+        }
+
+        [Fact(DisplayName = "Feature: OrderService. | Given: Existent product and order with defined date. | When: InsertOrder. | Should: Insert order with preset time.")]
+        public async Task InsertOrder_ExistentProductAndOrderWithDefinedDate_ShouldInsertOrderWithPresetTime()
+        {
+            // Arrange
+            var expectedDateTime = new DateTime(2020, 05, 15);
+            var order = new Order
+            {
+                Items = new List<OrderItem>
+                {
+                    new OrderItem
+                    {
+                        ProductId = this._productListStub[0].Id
+                    }
+                },
+                OrderDate = expectedDateTime
+            };
+
+            // Act
+            await this._service.InsertOrder(order);
+
+            // Assert
+            this._productRepositoryMock.Verify(p => p.GetProducts(), Times.Once);
+            this._orderRespositoryMock.Verify(o => o.Insert(order), Times.Once);
+            this._orderRespositoryMock.Verify(o => o.SaveChangesAsync(), Times.Once);
+            order.OrderDate.Should().Be(expectedDateTime);
+        }
     }
 }
