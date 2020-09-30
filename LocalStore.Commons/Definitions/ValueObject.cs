@@ -3,6 +3,8 @@ using System.Linq;
 
 namespace LocalStore.Commons.Definitions
 {
+    // Microsoft's implementation of Value object
+    // see: https://docs.microsoft.com/pt-br/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/implement-value-objects
     public abstract class ValueObject
     {
         protected static bool EqualOperator(ValueObject left, ValueObject right)
