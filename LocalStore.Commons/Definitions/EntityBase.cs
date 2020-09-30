@@ -4,9 +4,10 @@ namespace LocalStore.Commons.Definitions
 {
     public abstract class EntityBase : IEntity
     {
-        protected EntityBase(Guid? id = null)
+        protected EntityBase(Guid? id)
         {
             this.Id = id ?? Guid.NewGuid();
+            this.CreationTime = DateTime.Now;
         }
 
         public Guid Id { get; }
