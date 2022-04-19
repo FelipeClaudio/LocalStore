@@ -45,7 +45,6 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
                     .Returns(this._productListStub[i]);
             }
 
-
             this._service = new OrderService(this._orderRespositoryMock.Object, this._productRepositoryMock.Object);
         }
 
@@ -137,10 +136,10 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
         }
 
         [Theory(DisplayName = "Feature: OrderService. | Given: ValidDateRange. | When: GetAllOrdersForDateRange. | Should: Return all orders for date range.")]
-        [InlineData(0, 30.0)]
-        [InlineData(1, 20.0)]
-        [InlineData(2, 135.0)]
-        public void GetReveneuInDateRangeForProductId_ValidDateRange_ShouldRevenueInDateRangeForProductId(int elementId, decimal expectedRevenue)
+        [InlineData(0, 30.0, 1.0)]
+        [InlineData(1, 20.0, 10.0)]
+        [InlineData(2, 135.0, 5.0)]
+        public void GetReveneuInDateRangeForProductId_ValidDateRange_ShouldRevenueInDateRangeForProductId(int elementId, decimal expectedRevenue, decimal expectedQuantity)
         {
             // Arrange
             var dateRange = new DateRange
@@ -148,13 +147,15 @@ namespace LocalStore.UnitTests.LocalStore.Domain.Services
                 InitialDate = DateTime.Parse("2020-01-01"),
                 FinalDate = DateTime.Parse("2020-12-31")
             };
-
             var selectedProduct = this._productListStub[elementId];
+
             // Act
-            decimal calculatedRevenue = this._service.GetRevenueInDateRangeForProductId(dateRange, selectedProduct.Id);
+            var calculatedRevenues = this._service.GetRevenuesInDateRangeForProductId(dateRange);
+            var expectedResponse = calculatedRevenues.FirstOrDefault(c => c.ProductId == selectedProduct.Id);
 
             // Assert
-            calculatedRevenue.Should().Be(expectedRevenue);
+            expectedResponse.Revenue.Should().Be(expectedRevenue);
+            expectedResponse.Quantity.Should().Be(expectedQuantity);
             this._orderRespositoryMock.Verify(o => o.GetOrdersInDateRange(dateRange), Times.Once);
         }
 

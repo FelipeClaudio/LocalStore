@@ -1,4 +1,5 @@
 ﻿using LocalStore.Commons.Models;
+using LocalStore.Domain.Models.Order;
 using LocalStore.Domain.Models.OrderAggregate;
 using LocalStore.Domain.Models.ProductAggregate;
 using System;
@@ -18,13 +19,18 @@ namespace LocalStore.Domain.Services
             this._orderRepository = orderRepository;
             this._productRepository = productRepository;
         }
-        public decimal GetRevenueInDateRangeForProductId(DateRange dateRange, Guid id)
+
+        public IEnumerable<OrderAdditionalInfo> GetRevenuesInDateRangeForProductId(DateRange dateRange)
         {
             var orderItems = GetOrderItemsForDateRange(dateRange);
 
-            return orderItems.Where(o => o.ProductId == id)
-                             .Select(o => new { orderRevenue = o.Quantity * o.UnitPrice })
-                             .Sum(o => o.orderRevenue);
+            return orderItems.GroupBy(o => o.ProductId)
+                             .Select(o => new OrderAdditionalInfo
+                             {
+                                 Revenue = o.Sum(x => x.Quantity * x.UnitPrice),
+                                 Quantity = o.Sum(x => x.Quantity),
+                                 ProductId = o.Key
+                             });
         }
 
         public IEnumerable<Product> GetTopNMostSoldProductsInDateRange(DateRange dateRange, int numberOfElements)

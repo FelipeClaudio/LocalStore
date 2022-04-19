@@ -1,4 +1,5 @@
 ﻿using LocalStore.Commons.Models;
+using LocalStore.Domain.Models.Order;
 using LocalStore.Domain.Models.OrderAggregate;
 using LocalStore.Domain.Models.ProductAggregate;
 using System;
@@ -12,8 +13,8 @@ namespace LocalStore.Domain.Services
         IEnumerable<Product> GetTopNMostSoldProductsInDateRange(DateRange dateRange, int numberOfElements);
         
         IEnumerable<Product> GetTopNLessSoldProductsInDateRange(DateRange dateRange, int numberOfElements);
-        
-        decimal GetRevenueInDateRangeForProductId(DateRange dateRange, Guid id);
+
+        IEnumerable<OrderAdditionalInfo> GetRevenuesInDateRangeForProductId(DateRange dateRange);
         
         Task InsertOrder(Order order);
         

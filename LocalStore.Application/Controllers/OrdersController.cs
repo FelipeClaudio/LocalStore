@@ -1,5 +1,6 @@
 ﻿using LocalStore.Application.Models;
 using LocalStore.Commons.Models;
+using LocalStore.Domain.Models.Order;
 using LocalStore.Domain.Models.OrderAggregate;
 using LocalStore.Domain.Models.ProductAggregate;
 using LocalStore.Domain.Services;
@@ -46,24 +47,40 @@ namespace LocalStore.Application.Controllers
         public ActionResult<IEnumerable<GetProductSellingReport>> GetNMostSoldProducts(int numberOfProducts, [FromQuery] DateRange dateRange)
         {
             IEnumerable<Product> mostSoldProducts = this._orderService.GetTopNMostSoldProductsInDateRange(dateRange, numberOfProducts);
+            IEnumerable<OrderAdditionalInfo> orderAdditionalInfos = this._orderService.GetRevenuesInDateRangeForProductId(dateRange);
 
-            return Ok(mostSoldProducts.Select(product => new GetProductSellingReport
+            var sellingReport = mostSoldProducts.Select(product => 
             {
-                Name = product.Name,
-                Revenue = this._orderService.GetRevenueInDateRangeForProductId(dateRange, product.Id)
-            }));
+                var currentOrderAdditionalInfo = orderAdditionalInfos.FirstOrDefault(o => o.ProductId == product.Id);
+                return new GetProductSellingReport
+                {
+                    Name = product.Name,
+                    Revenue = currentOrderAdditionalInfo.Revenue,
+                    Quantity = currentOrderAdditionalInfo.Quantity
+                };
+            });
+
+            return Ok(sellingReport);
         }
 
         [HttpGet("lesssold/{numberOfProducts}")]
         public ActionResult<IEnumerable<GetProductSellingReport>> GetNLessSoldProducts(int numberOfProducts, [FromQuery] DateRange dateRange)
         {
-            IEnumerable<Product> mostSoldProducts = this._orderService.GetTopNLessSoldProductsInDateRange(dateRange, numberOfProducts);
+            IEnumerable<Product> lessSoldProducts = this._orderService.GetTopNLessSoldProductsInDateRange(dateRange, numberOfProducts);
+            IEnumerable<OrderAdditionalInfo> orderAdditionalInfos = this._orderService.GetRevenuesInDateRangeForProductId(dateRange);
 
-            return Ok(mostSoldProducts.Select(product => new GetProductSellingReport
+            var sellingReport = lessSoldProducts.Select(product =>
             {
-                Name = product.Name,
-                Revenue = this._orderService.GetRevenueInDateRangeForProductId(dateRange, product.Id)
-            }));
+                var currentOrderAdditionalInfo = orderAdditionalInfos.FirstOrDefault(o => o.ProductId == product.Id);
+                return new GetProductSellingReport
+                {
+                    Name = product.Name,
+                    Revenue = currentOrderAdditionalInfo.Revenue,
+                    Quantity = currentOrderAdditionalInfo.Quantity
+                };
+            });
+
+            return Ok(sellingReport);
         }
     }
 }

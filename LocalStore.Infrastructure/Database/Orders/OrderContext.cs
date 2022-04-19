@@ -13,7 +13,7 @@ namespace LocalStore.Infrastructure.Database.Orders
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=BRRIOWN032980\SQLEXPRESS;Initial Catalog=LocalStore;Integrated Security=True");
+            optionsBuilder.UseSqlServer(@"Data Source=89319403J;Initial Catalog=LocalStore;User Id=localstoreuser;Password=localstoreuser;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
