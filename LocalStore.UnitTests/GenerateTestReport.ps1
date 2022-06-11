@@ -24,11 +24,11 @@ try {
     $recentCoverageFile = Get-ChildItem -File -Filter *.coverage -Path $testResultsFolder -Name -Recurse | Select-Object -First 1;
     write-host 'Test Completed'  -ForegroundColor Green
 
-    $comand = "$env:USERPROFILE\.nuget\packages\microsoft.codecoverage\16.8.0-preview-20200812-03\build\netstandard1.0\CodeCoverage\CodeCoverage.exe analyze  /output:$testResultsFolder\MyTestOutput.coveragexml  $testResultsFolder'\'$recentCoverageFile"
+    $comand = "$env:USERPROFILE\.nuget\packages\microsoft.codecoverage\17.2.0\build\netstandard1.0\CodeCoverage\CodeCoverage.exe analyze  /output:$testResultsFolder\MyTestOutput.coveragexml  $testResultsFolder'\'$recentCoverageFile"
     iex $comand
     write-host 'CoverageXML Generated'  -ForegroundColor Green
 
-    dotnet $env:USERPROFILE\.dotnet\tools\.store\dotnet-reportgenerator-globaltool\4.6.1\dotnet-reportgenerator-globaltool\4.6.1\tools\netcoreapp3.0\any\ReportGenerator.dll "-reports:$testResultsFolder\MyTestOutput.coveragexml" "-targetdir:$testResultsFolder\coveragereport"
+    dotnet $env:USERPROFILE\.dotnet\tools\.store\dotnet-reportgenerator-globaltool\5.1.9\dotnet-reportgenerator-globaltool\5.1.9\tools\net6.0\any\ReportGenerator.dll "-reports:$testResultsFolder\MyTestOutput.coveragexml" "-targetdir:$testResultsFolder\coveragereport"
     write-host 'CoverageReport Published'  -ForegroundColor Green
 }
 
