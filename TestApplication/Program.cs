@@ -15,7 +15,7 @@ namespace TestApplication
     {
         private static async Task Main(string[] args)
         {
-            string connectionString = @"Data Source=89319403J;Initial Catalog=LocalStore;User Id=localstoreuser;Password=localstoreuser;";
+            string connectionString = @"Data Source=PF2LQB2E;Initial Catalog=LocalStore;User Id=localstoreuser;Password=localstoreuser;";
             var productsOptionsBuilder = new DbContextOptionsBuilder();
             productsOptionsBuilder.UseSqlServer(connectionString);
 
