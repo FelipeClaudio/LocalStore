@@ -1,4 +1,5 @@
-﻿using Force.DeepCloner;
+﻿using AutoMapper;
+using Force.DeepCloner;
 using LocalStore.Domain.Models.ProductAggregate;
 using LocalStore.Infrastructure.Database.Products.Mappers;
 using LocalStore.Infrastructure.Database.Products.Models;
@@ -13,63 +14,68 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
     public class ProductRepository : IProductRepository
     {
         private readonly ProductContext _context;
+        private readonly IMapper _mapper;
 
-        public ProductRepository(ProductContext context)
+        public ProductRepository(ProductContext context, IMapper mapper)
         {
             this._context = context;
+            this._mapper = mapper;
         }
 
         public Domain.Models.ProductAggregate.ProductPart GetPartById(Guid id)
         {
-            return this._context.ProductParts
-                        .Include(p => p.ProductPartMaterials)
-                        .ThenInclude(p => p.Material)
-                        .FirstOrDefault(p => p.Id == id)
-                        .ToDomainModel();
+            var productPart = this._context.ProductParts
+                        .Include(productPart => productPart.ProductPartMaterials)
+                        .ThenInclude(material => material.Material)
+                        .FirstOrDefault(product => product.Id == id);
+
+            return this._mapper.Map<Models.ProductPart, Domain.Models.ProductAggregate.ProductPart>(productPart);
         }
 
         public IList<Domain.Models.ProductAggregate.ProductPart> GetParts()
         {
             return this._context.ProductParts
-                        .Include(p => p.ProductPartMaterials)
-                        .ThenInclude(p => p.Material)
-                        .Select(p => p.ToDomainModel())
+                        .Include(productPart => productPart.ProductPartMaterials)
+                        .ThenInclude(material => material.Material)
+                        .Select(p => this._mapper.Map<Models.ProductPart, Domain.Models.ProductAggregate.ProductPart>(p))
                         .ToList();
         }
 
         public Domain.Models.ProductAggregate.Product GetProductById(Guid id)
         {
-            return this._context.Products
-                        .Include(p => p.ProductParts)
-                        .ThenInclude(p => p.ProductPartMaterials)
-                        .ThenInclude(p => p.Material)
-                        .FirstOrDefault(p => p.Id == id)
-                        .ToDomainModel();
+            var product = this._context.Products
+                        .Include(productPart => productPart.ProductParts)
+                        .ThenInclude(productPart => productPart.ProductPartMaterials)
+                        .ThenInclude(material => material.Material)
+                        .FirstOrDefault(product => product.Id == id);
+
+            return this._mapper.Map<Models.Product, Domain.Models.ProductAggregate.Product>(product);
         }
 
         public Domain.Models.ProductAggregate.Product GetProductByName(string name)
         {
-            return this._context.Products
+            var product = this._context.Products
                         .Include(p => p.ProductParts)
                         .ThenInclude(p => p.ProductPartMaterials)
                         .ThenInclude(p => p.Material)
-                        .FirstOrDefault(p => p.Name == name)
-                        .ToDomainModel();
+                        .FirstOrDefault(p => p.Name == name);
+
+            return this._mapper.Map<Models.Product, Domain.Models.ProductAggregate.Product>(product);
         }
 
         public IList<Domain.Models.ProductAggregate.Product> GetProducts()
         {
             return this._context.Products
-                        .Include(p => p.ProductParts)
-                        .ThenInclude(p => p.ProductPartMaterials)
-                        .ThenInclude(p => p.Material)
-                        .Select(p => p.ToDomainModel())
+                        .Include(product => product.ProductParts)
+                        .ThenInclude(productPart => productPart.ProductPartMaterials)
+                        .ThenInclude(productPartMaterial => productPartMaterial.Material)
+                        .Select(product => this._mapper.Map<Models.Product, Domain.Models.ProductAggregate.Product>(product))
                         .ToList();
         }
 
         public void Insert(Domain.Models.ProductAggregate.Product entity)
         {
-            Models.Product product = entity.ToRepositoryModel();
+            Models.Product product = this._mapper.Map<Domain.Models.ProductAggregate.Product, Models.Product>(entity);
 
             // avoids inserting children elements
             var productClone = product.DeepClone();
@@ -78,8 +84,8 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
             this.InsertProduct(productClone);
 
             IEnumerable<Models.Material> materials = product.ProductParts
-                .Select(p => p.ProductPartMaterials.Select(m => m.Material))
-                .SelectMany(m => m);
+                .Select(productPart => productPart.ProductPartMaterials.Select(m => m.Material))
+                .SelectMany(material => material);
 
             this.InsertMaterials(materials);
 
@@ -151,9 +157,9 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
 
         private bool MaterialExistsAndIsValid(Models.Material material)
         {
-            return this._context.Materials.Any(m =>
-                m.Name == material.Name &&
-                m.ExpirationDate == null);
+            return this._context.Materials.Any(currentMaterial =>
+                currentMaterial.Name == material.Name &&
+                currentMaterial.ExpirationDate == null);
         }
 
         public void DeleteById(Guid id)

@@ -1,4 +1,5 @@
-﻿using LocalStore.Domain.Models.OrderAggregate;
+﻿using AutoMapper;
+using LocalStore.Domain.Models.OrderAggregate;
 using LocalStore.Domain.Models.ProductAggregate;
 using LocalStore.Infrastructure.Database;
 using LocalStore.Infrastructure.Database.Orders;
@@ -19,8 +20,13 @@ namespace TestApplication
             string connectionString = ConfigurationUtilities.GetConnectionStringFromConnectionKey("ProductsDb");
             var productsOptionsBuilder = new DbContextOptionsBuilder();
             productsOptionsBuilder.UseSqlServer(connectionString);
+            var config = new MapperConfiguration(cfg => {
+                cfg.AddProfile<MapperProfile>();
+            });
 
-            var productsRespository = new ProductRepository(new ProductContext());
+            var mapper = config.CreateMapper();
+
+            var productsRespository = new ProductRepository(new ProductContext(), mapper);
 
             var material1 = new Material("Some-Material1", "Some-Description1", 2.50M);
             var material2 = new Material("Some-Material2", "Some-Description2", 4.75M);
@@ -56,7 +62,7 @@ namespace TestApplication
 
             var products = productsRespository.GetProducts();
 
-            var ordersRepository = new OrderRepository(new OrderContext());
+            var ordersRepository = new OrderRepository(new OrderContext(), mapper);
             var order1 = new Order
             {
                 Items = new List<OrderItem>

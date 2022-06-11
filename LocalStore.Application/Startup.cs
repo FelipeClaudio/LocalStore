@@ -1,4 +1,5 @@
 using LocalStore.Application.Extensions;
+using LocalStore.Infrastructure.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +27,7 @@ namespace LocalStore.Application
             services.AddOrderAggregate(Configuration);
 
             services.AddSwaggerGen();
+            services.AddInfrastuctureMapperExtension();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
