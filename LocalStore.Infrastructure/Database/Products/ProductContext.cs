@@ -5,15 +5,9 @@ namespace LocalStore.Infrastructure.Database.Products
 {
     public class ProductContext : DbContext
     {
-        public ProductContext(DbContextOptions<ProductContext> options) : base(options) { }
-
-        public ProductContext()
-        {
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=PF2LQB2E;Initial Catalog=LocalStore;User Id=localstoreuser;Password=localstoreuser;");
+            optionsBuilder.UseSqlServer(ConfigurationUtilities.GetConnectionStringFromConnectionKey("ProductsDB"));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

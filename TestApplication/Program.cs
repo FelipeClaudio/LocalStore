@@ -1,5 +1,6 @@
 ﻿using LocalStore.Domain.Models.OrderAggregate;
 using LocalStore.Domain.Models.ProductAggregate;
+using LocalStore.Infrastructure.Database;
 using LocalStore.Infrastructure.Database.Orders;
 using LocalStore.Infrastructure.Database.Orders.Repositories;
 using LocalStore.Infrastructure.Database.Products;
@@ -15,7 +16,7 @@ namespace TestApplication
     {
         private static async Task Main(string[] args)
         {
-            string connectionString = @"Data Source=PF2LQB2E;Initial Catalog=LocalStore;User Id=localstoreuser;Password=localstoreuser;";
+            string connectionString = ConfigurationUtilities.GetConnectionStringFromConnectionKey("ProductsDb");
             var productsOptionsBuilder = new DbContextOptionsBuilder();
             productsOptionsBuilder.UseSqlServer(connectionString);
 

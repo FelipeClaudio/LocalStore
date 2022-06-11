@@ -5,15 +5,9 @@ namespace LocalStore.Infrastructure.Database.Orders
 {
     public class OrderContext : DbContext
     {
-        public OrderContext(DbContextOptions<OrderContext> options) : base(options) { }
-
-        public OrderContext()
-        {
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=PF2LQB2E;Initial Catalog=LocalStore;User Id=localstoreuser;Password=localstoreuser;");
+            optionsBuilder.UseSqlServer(ConfigurationUtilities.GetConnectionStringFromConnectionKey("OrdersDB"));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
