@@ -5,6 +5,10 @@ namespace LocalStore.Infrastructure.Database.Products
 {
     public class ProductContext : DbContext
     {
+        public ProductContext() { }
+
+        public ProductContext(DbContextOptions<ProductContext> options) : base(options) { }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(ConfigurationUtilities.GetConnectionStringFromConnectionKey("ProductsDB"));

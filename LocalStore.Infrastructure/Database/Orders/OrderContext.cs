@@ -5,6 +5,10 @@ namespace LocalStore.Infrastructure.Database.Orders
 {
     public class OrderContext : DbContext
     {
+        public OrderContext() { }
+
+        public OrderContext(DbContextOptions<OrderContext> options) : base(options) { }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(ConfigurationUtilities.GetConnectionStringFromConnectionKey("OrdersDB"));
