@@ -84,7 +84,6 @@ namespace LocalStore.Infrastructure.Database.Products.Repositories
             this.InsertMaterials(materials);
 
             this.InsertProductParts(product);
-
         }
 
         private bool InsertProduct(Models.Product product)
